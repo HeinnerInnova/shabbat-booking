@@ -1,4 +1,6 @@
-import Header from "./Header.jsx";
+import Footer from "./commons/Footer.jsx";
+import HeadConfig from "./commons/HeadConfig.jsx";
+import Header from "./commons/Header.jsx";
 import { useNavigate } from "react-router-dom";
 
 const Success = () => {
@@ -8,25 +10,7 @@ const Success = () => {
     };
     return (
         <>
-            <meta charSet="utf-8" />
-            <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-            <title>Confirmación de Reserva</title>
-            <link href="https://fonts.googleapis.com" rel="preconnect" />
-            <link crossOrigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-            <link
-                href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap"
-                rel="stylesheet"
-            />
-            <link
-                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-                rel="stylesheet"
-            />
-            <style
-                dangerouslySetInnerHTML={{
-                    __html:
-                        "\n        .material-symbols-outlined {\n            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;\n        }\n    "
-                }}
-            />
+            <HeadConfig />
             <div className="relative flex min-h-screen w-full flex-col">
                 <Header />
                 <main className="flex-grow w-full flex items-center justify-center p-4 sm:p-6 lg:p-8">
@@ -118,46 +102,7 @@ const Success = () => {
                         </div>
                     </div>
                 </main>
-                <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-                    <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div className="flex flex-col items-center justify-between gap-6 py-8 md:flex-row">
-                            <div className="flex flex-col items-center gap-2 md:items-start">
-                                <a
-                                    className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white"
-                                    href="#"
-                                >
-                                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
-                                        <span className="material-symbols-outlined text-xl">home</span>
-                                    </span>
-                                    <span>HogarGest</span>
-                                </a>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">
-                                    © 2024 HogarGest. Todos los derechos reservados.
-                                </p>
-                            </div>
-                            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-                                <a
-                                    className="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary"
-                                    href="#"
-                                >
-                                    Términos
-                                </a>
-                                <a
-                                    className="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary"
-                                    href="#"
-                                >
-                                    Privacidad
-                                </a>
-                                <a
-                                    className="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary"
-                                    href="#"
-                                >
-                                    Contacto
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
             </div>
         </>
 

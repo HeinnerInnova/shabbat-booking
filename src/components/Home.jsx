@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import Header from "./Header.jsx";
+import Header from "./commons/Header.jsx";
+import Footer from "./commons/Footer.jsx";
+import HeadConfig from "./commons/HeadConfig.jsx";
 
 const Home = () => {
 
@@ -11,9 +13,9 @@ const Home = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200">
-      <div className="layout-container flex h-full grow flex-col">
-
+    <>
+      <HeadConfig />
+      <div className="relative flex min-h-screen w-full flex-col">
         {/* HEADER */}
         <Header />
 
@@ -59,19 +61,9 @@ const Home = () => {
         </main>
 
         {/* FOOTER */}
-        <footer className="flex flex-col items-center gap-6 border-t border-slate-200 dark:border-slate-800 px-5 py-10 text-center bg-background-light dark:bg-background-dark">
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-4 md:justify-around">
-            {["Política de Privacidad", "Términos de Servicio", "Contacto"].map(text => (
-              <a key={text} href="#" className="text-slate-600 dark:text-slate-400 text-sm hover:text-primary">{text}</a>
-            ))}
-          </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
-            © 2024 Gestión de Hogares. Todos los derechos reservados.
-          </p>
-        </footer>
-
+        <Footer />
       </div>
-    </div>
+    </>
   );
 };
 

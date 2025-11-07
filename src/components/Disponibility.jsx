@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import Header from "./Header.jsx";
+import Header from "./commons/Header.jsx";
+import Footer from "./commons/Footer.jsx";
+import HeadConfig from "./commons/HeadConfig.jsx";
 export default function Disponibility() {
   const navigate = useNavigate();
 
@@ -9,25 +11,7 @@ export default function Disponibility() {
 
   return (
     <>
-      <meta charSet="utf-8" />
-      <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-      <title>Disponibilidad</title>
-      <link href="https://fonts.googleapis.com" rel="preconnect" />
-      <link crossOrigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap"
-        rel="stylesheet"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-        rel="stylesheet"
-      />
-      <style
-        dangerouslySetInnerHTML={{
-          __html:
-            "\n        .material-symbols-outlined {\n            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;\n        }\n        .material-symbols-outlined.bed-icon {\n            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;\n        }\n    "
-        }}
-      />
+      <HeadConfig />
       <div className="relative flex min-h-screen w-full flex-col">
         <Header />
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1343,8 +1327,9 @@ export default function Disponibility() {
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     </>
-
   );
+  
 }
