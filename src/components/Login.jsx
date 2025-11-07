@@ -1,29 +1,22 @@
 import { useNavigate } from "react-router-dom";
+import HeadConfig from "./commons/HeadConfig.jsx";
 
 const Login = () => {
 
     const navigate = useNavigate();
 
-  const handleLogin = () => {
-    // Aquí podrías validar el login antes
-    navigate("/manage-request");
-  };
+    const handleLogin = () => {
+        // Aquí podrías validar el login antes
+        navigate("/manage-request");
+    };
+
+    const navToHome = () => {
+        navigate("/");
+    };
 
     return (
         <>
-            <meta charSet="utf-8" />
-            <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-            <title>Acceso para Administradores</title>
-            <link href="https://fonts.googleapis.com" rel="preconnect" />
-            <link crossOrigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-            <link
-                href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
-                rel="stylesheet"
-            />
-            <link
-                href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-                rel="stylesheet"
-            />
+            <HeadConfig />
             <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-background-light p-4">
                 <div className="w-full max-w-md rounded-xl border border-zinc-200 bg-white shadow-lg">
                     <div className="flex flex-col p-8 md:p-10">
@@ -74,6 +67,9 @@ const Login = () => {
                             <button onClick={handleLogin} className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 mt-3 bg-primary text-white text-base font-bold leading-normal tracking-wide shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 transition-colors">
                                 <span className="truncate">Iniciar Sesión</span>
                             </button>
+                            <button onClick={navToHome} className="flex w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-11 px-5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400/50 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark transition-colors">
+                                <span>Volver al Inicio</span>
+                            </button>
                         </form>
                         <div className="mt-6 text-center">
                             <a
@@ -85,11 +81,6 @@ const Login = () => {
                         </div>
                     </div>
                 </div>
-                <footer className="mt-8 text-center">
-                    <p className="text-zinc-500 text-xs">
-                        © 2024 Gestión de Hogares. Todos los derechos reservados.
-                    </p>
-                </footer>
             </div>
         </>
 
