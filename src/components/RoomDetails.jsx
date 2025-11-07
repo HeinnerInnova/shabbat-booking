@@ -1,13 +1,25 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Header from "./commons/Header";
 import Footer from "./commons/Footer";
 import HeadConfig from "./commons/HeadConfig";
 const RoomDetails = () => {
+    const location = useLocation();
     const navigate = useNavigate();
+    const { detalleHabitacion } = location.state || {};
+
+    useEffect(() => {
+        if (!detalleHabitacion) {
+            navigate("/disponibility", { replace: true });
+        }
+    }, [detalleHabitacion, navigate]);
+
+    if (!detalleHabitacion) return null;
 
     const navToSuccess = () => {
         navigate("/success");
     };
+
 
     return (<>
         <HeadConfig />
@@ -18,7 +30,7 @@ const RoomDetails = () => {
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <div className="flex min-w-72 flex-col gap-2">
                             <p className="text-slate-900 dark:text-white text-3xl md:text-4xl font-bold leading-tight tracking-tight">
-                                Detalles de la Habitación 08
+                                Detalles de la Habitación {detalleHabitacion.numeroHabitación}
                             </p>
                             <p className="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">
                                 Seleccione las camas disponibles y complete sus datos para
@@ -54,77 +66,62 @@ const RoomDetails = () => {
                                 Disponibilidad de Camas
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/30">
-                                    <p className="font-semibold text-slate-800 dark:text-slate-200">
-                                        Camarote 1
-                                    </p>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="flex cursor-pointer items-center justify-between gap-3 rounded-md p-3 transition-colors hover:bg-slate-200/50 dark:hover:bg-slate-700/50">
-                                            <span className="flex items-center gap-3">
-                                                <span className="material-symbols-outlined text-green-500">
-                                                    check_circle
-                                                </span>
-                                                <span className="text-slate-700 dark:text-slate-300 text-base font-normal leading-normal">
-                                                    Cama 1 - SUPERIOR
-                                                </span>
-                                            </span>
-                                            <input
-                                                className="h-5 w-5 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-primary checked:bg-primary checked:border-primary focus:ring-primary/50 focus:ring-offset-background-light dark:focus:ring-offset-background-dark"
-                                                type="checkbox"
-                                            />
-                                        </label>
-                                        <label className="flex cursor-not-allowed items-center justify-between gap-3 rounded-md p-3 opacity-60">
-                                            <span className="flex items-center gap-3">
-                                                <span className="material-symbols-outlined text-slate-400 dark:text-slate-500">
-                                                    cancel
-                                                </span>
-                                                <span className="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">
-                                                    Cama 2 - INFERIOR
-                                                </span>
-                                            </span>
-                                            <input
-                                                className="h-5 w-5 rounded border-slate-300 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-primary checked:bg-primary checked:border-primary"
-                                                disabled=""
-                                                type="checkbox"
-                                            />
-                                        </label>
+                                {detalleHabitacion.camarotes.map((camarote, iCamarote) => (
+                                    <div
+                                        key={iCamarote}
+                                        className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/30"
+                                    >
+                                        <p className="font-semibold text-slate-800 dark:text-slate-200">
+                                            Camarote {camarote.numeroCamarote}
+                                        </p>
+
+                                        <div className="flex flex-col gap-2">
+                                            {camarote.camas.map((cama, iCama) => {
+                                                const esDisponible = cama.estado === "D";
+                                                const ubicacion =
+                                                    cama.ubicación === "S" ? "SUPERIOR" : "INFERIOR";
+
+                                                return (
+                                                    <label
+                                                        key={iCama}
+                                                        className={`flex items-center justify-between gap-3 rounded-md p-3 ${esDisponible
+                                                            ? "cursor-pointer transition-colors hover:bg-slate-200/50 dark:hover:bg-slate-700/50"
+                                                            : "cursor-not-allowed opacity-60"
+                                                            }`}
+                                                    >
+                                                        <span className="flex items-center gap-3">
+                                                            <span
+                                                                className={`material-symbols-outlined ${esDisponible
+                                                                    ? "text-green-500"
+                                                                    : "text-slate-400 dark:text-slate-500"
+                                                                    }`}
+                                                            >
+                                                                {esDisponible ? "check_circle" : "cancel"}
+                                                            </span>
+                                                            <span
+                                                                className={`text-base font-normal leading-normal ${esDisponible
+                                                                    ? "text-slate-700 dark:text-slate-300"
+                                                                    : "text-slate-500 dark:text-slate-400"
+                                                                    }`}
+                                                            >
+                                                                Cama {cama.numeroCama} - {ubicacion}
+                                                            </span>
+                                                        </span>
+
+                                                        <input
+                                                            type="checkbox"
+                                                            disabled={!esDisponible}
+                                                            className={`h-5 w-5 rounded border-slate-300 dark:border-slate-600 ${esDisponible
+                                                                ? "dark:bg-slate-700 text-primary checked:bg-primary checked:border-primary focus:ring-primary/50 focus:ring-offset-background-light dark:focus:ring-offset-background-dark"
+                                                                : "bg-slate-200 dark:bg-slate-700"
+                                                                }`}
+                                                        />
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/30">
-                                    <p className="font-semibold text-slate-800 dark:text-slate-200">
-                                        Camarote 2
-                                    </p>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="flex cursor-pointer items-center justify-between gap-3 rounded-md p-3 transition-colors hover:bg-slate-200/50 dark:hover:bg-slate-700/50">
-                                            <span className="flex items-center gap-3">
-                                                <span className="material-symbols-outlined text-green-500">
-                                                    check_circle
-                                                </span>
-                                                <span className="text-slate-700 dark:text-slate-300 text-base font-normal leading-normal">
-                                                    Cama 3 - SUPERIOR
-                                                </span>
-                                            </span>
-                                            <input
-                                                className="h-5 w-5 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-primary checked:bg-primary checked:border-primary focus:ring-primary/50 focus:ring-offset-background-light dark:focus:ring-offset-background-dark"
-                                                type="checkbox"
-                                            />
-                                        </label>
-                                        <label className="flex cursor-pointer items-center justify-between gap-3 rounded-md p-3 transition-colors hover:bg-slate-200/50 dark:hover:bg-slate-700/50">
-                                            <span className="flex items-center gap-3">
-                                                <span className="material-symbols-outlined text-green-500">
-                                                    check_circle
-                                                </span>
-                                                <span className="text-slate-700 dark:text-slate-300 text-base font-normal leading-normal">
-                                                    Cama 4 - INFERIOR
-                                                </span>
-                                            </span>
-                                            <input
-                                                className="h-5 w-5 rounded border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-primary checked:bg-primary checked:border-primary focus:ring-primary/50 focus:ring-offset-background-light dark:focus:ring-offset-background-dark"
-                                                type="checkbox"
-                                            />
-                                        </label>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
                         </div>
                         <div className="border-t border-slate-200 dark:border-slate-800" />

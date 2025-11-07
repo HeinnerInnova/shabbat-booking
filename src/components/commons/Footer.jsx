@@ -1,26 +1,29 @@
-import React from 'react'
+import logo from "../../assets/logo-llanos.png";
 
 const Footer = () => {
     return (
         <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark/50">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    {/* LOGO Y DESCRIPCIÓN */}
                     <div className="flex flex-col gap-4 col-span-2 md:col-span-1">
                         <a
-                            className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white"
+                            className="flex items-center gap-3 text-lg font-bold text-slate-900 dark:text-white"
                             href="#"
                         >
-                            <span className="material-symbols-outlined text-primary text-3xl">
-                                {" "}
-                                real_estate_agent{" "}
-                            </span>
-                            <span>Hogar Anacaona</span>
+                            <img
+                                src={logo}
+                                alt="Logo Shabbat Booking"
+                                className="w-10 h-10 rounded-md object-cover shadow-sm dark:bg-white"
+                            />
+                            <span>Sede Campestre Shabbat</span>
                         </a>
                         <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Brindando cuidado y confort a nuestros mayores con dedicación y
-                            amor.
+                            Brindando cuidado y confort a nuestros mayores con dedicación y amor.
                         </p>
                     </div>
+
+                    {/* NAVEGACIÓN */}
                     <div>
                         <p className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
                             Navegación
@@ -32,14 +35,6 @@ const Footer = () => {
                                     href="#"
                                 >
                                     Inicio
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    className="text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary"
-                                    href="#"
-                                >
-                                    Habitaciones
                                 </a>
                             </li>
                             <li>
@@ -60,6 +55,8 @@ const Footer = () => {
                             </li>
                         </ul>
                     </div>
+
+                    {/* LEGAL */}
                     <div>
                         <p className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
                             Legal
@@ -83,11 +80,14 @@ const Footer = () => {
                             </li>
                         </ul>
                     </div>
+
+                    {/* REDES SOCIALES */}
                     <div>
                         <p className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
                             Síguenos
                         </p>
                         <div className="flex gap-4">
+                            {/* Twitter */}
                             <a
                                 className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary"
                                 href="#"
@@ -101,6 +101,8 @@ const Footer = () => {
                                     <path d="M22.46 6c-.77.35-1.6.58-2.46.67.88-.53 1.56-1.37 1.88-2.38-.83.49-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98-3.56-.18-6.72-1.88-8.84-4.48-.37.63-.58 1.37-.58 2.15 0 1.49.76 2.81 1.91 3.58-.7-.02-1.36-.21-1.94-.53v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.33 1.84c-.35 0-.69-.02-1.03-.06A12.02 12.02 0 0 0 8.29 20c7.55 0 11.68-6.25 11.68-11.68l-.01-.53c.8-.58 1.49-1.3 2.04-2.13z" />
                                 </svg>
                             </a>
+
+                            {/* Instagram */}
                             <a
                                 className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary"
                                 href="#"
@@ -114,6 +116,8 @@ const Footer = () => {
                                     <path d="M18.2 2H5.8C3.7 2 2 3.7 2 5.8v12.4C2 20.3 3.7 22 5.8 22h12.4c2.1 0 3.8-1.7 3.8-3.8V5.8C22 3.7 20.3 2 18.2 2zM12 18.2c-3.4 0-6.2-2.8-6.2-6.2s2.8-6.2 6.2-6.2 6.2 2.8 6.2 6.2-2.8 6.2-6.2 6.2zM18.2 7.8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
                                 </svg>
                             </a>
+
+                            {/* LinkedIn */}
                             <a
                                 className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary"
                                 href="#"
@@ -130,9 +134,11 @@ const Footer = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* COPYRIGHT */}
                 <div className="mt-8 border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                        © 2024 Hogar Anacaona. Todos los derechos reservados.
+                        © 2025 Sede Campestre Shabbat. Todos los derechos reservados.
                     </p>
                 </div>
             </div>
