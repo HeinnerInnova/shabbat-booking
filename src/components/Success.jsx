@@ -8,6 +8,7 @@ const Success = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { reservationDetails } = location.state || {};
+    debugger
     // 🧭 Redirigir si no hay datos de habitación
     useEffect(() => {
         if (!reservationDetails) {
