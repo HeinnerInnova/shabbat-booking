@@ -6,17 +6,19 @@ import HeadConfig from "./commons/HeadConfig.jsx";
 
 export default function Disponibility() {
   const location = useLocation();
-  const { habitaciones } = location.state || [];
+  const { habitacionesHogar, hogar } = location.state || [];
   const navigate = useNavigate();
   const [filtro, setFiltro] = useState("Todas");
 
   useEffect(() => {
-    if (!habitaciones) {
+    if (!habitacionesHogar) {
       navigate("/", { replace: true });
     }
-  }, [habitaciones, navigate]);
+  }, [habitacionesHogar, navigate]);
 
-  if (!habitaciones) return null;
+  if (!habitacionesHogar) return null;
+
+  const habitaciones = habitacionesHogar.map(el => ({ ...el, hogar }))
 
   /**
    * Determina el estado general de la habitación.

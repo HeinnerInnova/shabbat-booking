@@ -1,10 +1,50 @@
 import Footer from "./commons/Footer.jsx";
 import HeadConfig from "./commons/HeadConfig.jsx";
 import Header from "./commons/Header.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 const Success = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const { reservationDetails } = location.state || {};
+    // 🧭 Redirigir si no hay datos de habitación
+    useEffect(() => {
+        if (!reservationDetails) {
+            navigate("/room-details", { replace: true });
+        }
+    }, [reservationDetails, navigate]);
+
+    if (!reservationDetails) return null;
+    const generarDescripcionCamas = (selectedBeds) => {
+        if (!selectedBeds || selectedBeds.length === 0) {
+            return "No hay camas seleccionadas.";
+        }
+
+        // Agrupar por número de camarote
+        const agrupado = selectedBeds.reduce((acc, item) => {
+            const numCamarote = item.camarote.numeroCamarote;
+            if (!acc[numCamarote]) acc[numCamarote] = [];
+            acc[numCamarote].push(item.cama);
+            return acc;
+        }, {});
+
+        // Construir el texto final
+        const descripcion = Object.entries(agrupado)
+            .map(([numCamarote, camas]) => {
+                const camasTexto = camas
+                    .map(
+                        (c) =>
+                            `Cama ${c.numeroCama} (${c.ubicación === "S" ? "Superior" : "Inferior"})`
+                    )
+                    .join(", ");
+                return `Camarote ${numCamarote} — ${camasTexto}`;
+            })
+            .join(" / ");
+
+        return `Camas seleccionadas: ${descripcion}`;
+    };
+
     const navToHome = () => {
         navigate("/");
     };
@@ -48,18 +88,34 @@ const Success = () => {
                                         </div>
                                         <div className="flex justify-between items-center gap-x-4 py-3">
                                             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                Fechas
+                                                Nombre del solicitante
                                             </p>
                                             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                01 Ago, 2024 - 31 Ago, 2024
+                                                {reservationDetails.formData.name}
                                             </p>
                                         </div>
                                         <div className="flex justify-between items-center gap-x-4 py-3">
                                             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                Hogar de Reposo
+                                                Fechas
                                             </p>
                                             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                Casa del Sol
+                                                {reservationDetails.dates.startDate} - {reservationDetails.dates.endDate}
+                                            </p>
+                                        </div>
+                                        <div className="flex justify-between items-center gap-x-4 py-3">
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                                                Hogar Seleccionado
+                                            </p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
+                                                {reservationDetails.habitacion.hogar === 'S' ? 'Hogar de Señoritas' : 'Hogar de Varones'}
+                                            </p>
+                                        </div>
+                                        <div className="flex justify-between items-center gap-x-4 py-3">
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                                                Habitación Seleccionada
+                                            </p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
+                                                {reservationDetails.habitacion.numeroHabitación}
                                             </p>
                                         </div>
                                         <div className="flex justify-between items-center gap-x-4 py-3">
@@ -67,7 +123,7 @@ const Success = () => {
                                                 Camas
                                             </p>
                                             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                Hab. Doble #204, Cama 1
+                                                {generarDescripcionCamas(reservationDetails.selectedBeds)}
                                             </p>
                                         </div>
                                     </div>
