@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Header from "./commons/Header.jsx";
 import Footer from "./commons/Footer.jsx";
 import HeadConfig from "./commons/HeadConfig.jsx";
@@ -7,8 +8,53 @@ const Home = () => {
 
   const navigate = useNavigate();
 
-  const navToDisponibility = (habitaciones, hogar) => {
-    navigate("/disponibility", { state: { habitacionesHogar: habitaciones, hogar } });
+  const [selectedDates, setSelectedDates] = useState({});
+
+  const handleDateChange = (hogar, field, value) => {
+    setSelectedDates((prev) => ({
+      ...prev,
+      [hogar]: {
+        ...prev[hogar],
+        [field]: value,
+      },
+    }));
+  };
+
+  const navToDisponibility = async (hogar, habitaciones) => {
+    try {
+      const fechas = selectedDates[hogar] || {};
+      // Validar que las fechas estén seleccionadas
+      if (!fechas.desde || !fechas.hasta) {
+        alert("Por favor selecciona ambas fechas antes de continuar");
+        return;
+      }
+
+      // Aquí puedes navegar o llamar a tu API
+      // navigate("/disponibility", {
+      //   state: { hogar, fechas },
+      // });
+
+      // 1️⃣ Llamar a la API
+      // const response = await fetch("https://www.shabbat-booking-api/get-rooms-detail", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ hogar }), // payload
+      // });
+
+      // 2️⃣ Validar respuesta
+      // if (!response.ok) {
+      //   throw new Error("Error al obtener habitaciones");
+      // }
+
+      // 3️⃣ Obtener datos
+      // const data = await response.json();
+
+      navigate("/disponibility", { state: { habitacionesHogar: habitaciones, hogar, fechas } });
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const hogares = [
@@ -172,13 +218,46 @@ const Home = () => {
 
             {/* Tarjetas */}
             <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
-              {hogares.map(({ title, desc, img, habitaciones, hogar }) => (
-                <div key={title} className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 hover:shadow-lg dark:hover:shadow-primary/10 transition-all">
-                  <div className="w-full aspect-video bg-cover bg-center rounded-lg" style={{ backgroundImage: `url(${img})` }}></div>
+              {hogares.map(({ title, desc, img, hogar, habitaciones }) => (
+                <div
+                  key={title}
+                  className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 hover:shadow-lg dark:hover:shadow-primary/10 transition-all"
+                >
+                  <div
+                    className="w-full aspect-video bg-cover bg-center rounded-lg"
+                    style={{ backgroundImage: `url(${img})` }}
+                  ></div>
                   <div className="flex flex-col flex-1 p-2">
                     <h3 className="text-xl font-bold text-slate-900 dark:text-slate-50">{title}</h3>
                     <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-6 flex-1">{desc}</p>
-                    <button onClick={() => navToDisponibility(habitaciones, hogar)} className="flex mt-auto w-full h-12 px-5 items-center justify-center rounded-lg bg-primary text-slate-50 text-base font-bold hover:bg-primary/90 transition-colors">
+
+                    {/* Selector de fechas */}
+                    <div className="flex gap-2 mb-4">
+                      <div className="flex flex-col">
+                        <label className="text-xs text-slate-600 dark:text-slate-300">Desde</label>
+                        <input
+                          type="date"
+                          value={selectedDates[hogar]?.desde || ""}
+                          onChange={(e) => handleDateChange(hogar, "desde", e.target.value)}
+                          className="border rounded-lg px-2 py-1 text-sm text-slate-800 dark:text-slate-50 dark:bg-slate-800"
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="text-xs text-slate-600 dark:text-slate-300">Hasta</label>
+                        <input
+                          type="date"
+                          value={selectedDates[hogar]?.hasta || ""}
+                          onChange={(e) => handleDateChange(hogar, "hasta", e.target.value)}
+                          className="border rounded-lg px-2 py-1 text-sm text-slate-800 dark:text-slate-50 dark:bg-slate-800"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Botón de acción */}
+                    <button
+                      onClick={() => navToDisponibility(hogar, habitaciones)}
+                      className="flex mt-auto w-full h-12 px-5 items-center justify-center rounded-lg bg-primary text-slate-50 text-base font-bold hover:bg-primary/90 transition-colors"
+                    >
                       Ver Disponibilidad
                     </button>
                   </div>

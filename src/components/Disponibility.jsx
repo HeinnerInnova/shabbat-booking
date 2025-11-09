@@ -6,7 +6,7 @@ import HeadConfig from "./commons/HeadConfig.jsx";
 
 export default function Disponibility() {
   const location = useLocation();
-  const { habitacionesHogar, hogar } = location.state || [];
+  const { habitacionesHogar, hogar, fechas } = location.state || [];
   const navigate = useNavigate();
   const [filtro, setFiltro] = useState("Todas");
 
@@ -77,7 +77,7 @@ export default function Disponibility() {
    * Navegación a los detalles de la habitación
    */
   const navToRoomDetails = (habitacionSeleccionada) => {
-    navigate("/room-details", { state: { detalleHabitacion: habitacionSeleccionada } });
+    navigate("/room-details", { state: { detalleHabitacion: habitacionSeleccionada, fechas } });
   };
 
   /**
@@ -102,10 +102,18 @@ export default function Disponibility() {
             <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex min-w-72 flex-col gap-1">
                 <p className="text-gray-900 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">
-                  Disponibilidad de Habitaciones
+                  Disponibilidad de Habitaciones {new Date(`${fechas.desde}T00:00:00`).toLocaleDateString("es-CO", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })} - {new Date(`${fechas.hasta}T00:00:00`).toLocaleDateString("es-CO", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                 </p>
                 <p className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">
-                  Hogar de Varones - {habitaciones.length} Habitaciones
+                  Hogar de {hogar === 'V' ? 'Varones' : 'Señoritas'} - {habitaciones.length} Habitaciones
                 </p>
               </div>
             </div>

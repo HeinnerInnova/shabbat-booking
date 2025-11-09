@@ -8,7 +8,6 @@ const Success = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { reservationDetails } = location.state || {};
-    debugger
     // 🧭 Redirigir si no hay datos de habitación
     useEffect(() => {
         if (!reservationDetails) {
@@ -100,7 +99,7 @@ const Success = () => {
                                                 Fechas
                                             </p>
                                             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                {reservationDetails.dates.startDate} - {reservationDetails.dates.endDate}
+                                                Del {new Date(`${reservationDetails.dates.startDate}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })} al {new Date(`${reservationDetails.dates.endDate}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
                                             </p>
                                         </div>
                                         <div className="flex justify-between items-center gap-x-4 py-3">

@@ -7,12 +7,7 @@ import HeadConfig from "./commons/HeadConfig";
 const RoomDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { detalleHabitacion } = location.state || {};
-
-    // 🧩 Estados de fechas y errores
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [error, setError] = useState("");
+    const { detalleHabitacion, fechas } = location.state || {};
 
     // 🧩 Estado del formulario
     const [formData, setFormData] = useState({
@@ -54,15 +49,11 @@ const RoomDetails = () => {
 
     // 🚀 Enviar datos al success
     const navToSuccess = () => {
-        if (!startDate || !endDate || !formData.name || selectedBeds.length === 0) {
-            alert("Por favor complete los datos y seleccione al menos una cama.");
-            return;
-        }
         const state = {
             reservationDetails: {
                 formData,
                 selectedBeds,
-                dates: { startDate, endDate },
+                dates: { startDate: fechas.desde, endDate: fechas.hasta },
                 habitacion: detalleHabitacion,
             }
         }
@@ -71,29 +62,6 @@ const RoomDetails = () => {
         });
     };
 
-    // 📅 Fechas mínimas
-    const today = new Date().toISOString().split("T")[0];
-
-    // 🧠 Validar rango de fechas
-    const handleStartChange = (e) => {
-        const newStart = e.target.value;
-        setStartDate(newStart);
-        if (endDate && newStart > endDate) {
-            setError("La fecha 'desde' no puede ser posterior a la fecha 'hasta'.");
-        } else {
-            setError("");
-        }
-    };
-
-    const handleEndChange = (e) => {
-        const newEnd = e.target.value;
-        setEndDate(newEnd);
-        if (startDate && newEnd < startDate) {
-            setError("La fecha 'hasta' no puede ser anterior a la fecha 'desde'.");
-        } else {
-            setError("");
-        }
-    };
 
     return (
         <>
@@ -275,39 +243,28 @@ const RoomDetails = () => {
 
                                     {/* 📅 Rango de fechas */}
                                     <div>
-                                        <label
-                                            htmlFor="reservation-start"
-                                            className="block text-sm font-medium"
-                                        >
+                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                                             Fechas de reservación
                                         </label>
 
-                                        <div className="flex gap-2">
-                                            <input
-                                                id="reservation-start"
-                                                type="date"
-                                                value={startDate}
-                                                onChange={handleStartChange}
-                                                min={today}
-                                                className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                                            />
-
-                                            <span className="self-center text-slate-500">a</span>
-
-                                            <input
-                                                id="reservation-end"
-                                                type="date"
-                                                value={endDate}
-                                                onChange={handleEndChange}
-                                                min={startDate || today}
-                                                className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                                            />
-                                        </div>
-
-                                        {error && (
-                                            <p className="text-red-600 text-sm mt-2">{error}</p>
+                                        {fechas?.desde && fechas?.hasta ? (
+                                            <p className="mt-1 text-base font-semibold text-slate-900 dark:text-slate-100">
+                                                Del{" "}
+                                                <span className="text-primary">
+                                                    {new Date(`${fechas.desde}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
+                                                </span>{" "}
+                                                al{" "}
+                                                <span className="text-primary">
+                                                    {new Date(`${fechas.hasta}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
+                                                </span>
+                                            </p>
+                                        ) : (
+                                            <p className="mt-1 text-slate-500 text-sm">
+                                                No se ha seleccionado un rango de fechas.
+                                            </p>
                                         )}
                                     </div>
+
 
                                     <div>
                                         <label htmlFor="gender" className="block text-sm font-medium">
