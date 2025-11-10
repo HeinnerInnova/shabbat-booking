@@ -25,6 +25,9 @@ const RoomDetails = () => {
     // 🧩 Estado de camas seleccionadas
     const [selectedBeds, setSelectedBeds] = useState([]);
 
+    const [otroDistrito, setOtroDistrito] = useState("");
+    const [isOtro, setIsOtro] = useState(false);
+
     // 🧭 Redirigir si no hay datos de habitación
     useEffect(() => {
         if (!detalleHabitacion) {
@@ -66,13 +69,21 @@ const RoomDetails = () => {
 
         // Detectar cuáles están vacíos
         const emptyFields = Object.entries(requiredFields)
-            .filter(([key]) => !formData[key]?.trim())
+            .filter(([key]) => {
+                // Validación especial para el distrito “Otro”
+                if (key === "district") {
+                    const valor = formData[key]?.trim();
+                    return !valor; // si está vacío o no escribió nada
+                }
+                return !formData[key]?.trim();
+            })
             .map(([, label]) => label);
 
         // Validaciones adicionales
         const fechasIncompletas = !fechas?.desde || !fechas?.hasta;
         const sinCamasSeleccionadas = !selectedBeds || selectedBeds.length === 0;
 
+        // Verificar disponibilidad de camas
         const hayCamasDisponibles = detalleHabitacion?.camarotes?.some((camarote) =>
             camarote.camas?.some((cama) => cama.estado === "D")
         );
@@ -125,6 +136,45 @@ const RoomDetails = () => {
         };
 
         navigate("/success", { state });
+    };
+
+
+    const zonas = {
+        "ZONA 1 VILLAVICENCIO": [
+            "Villavicencio Central",
+            "Villavicencio Oriental",
+            "Villavicencio Occidental",
+            "Villavicencio Norte",
+            "Acacías",
+            "Puerto López",
+            "Villanueva",
+            "Guainía",
+        ],
+        "ZONA 2 ARIARI": [
+            "Granada Central",
+            "Granada Emanuel",
+            "Puerto Rico",
+            "Vista Hermosa",
+            "Lejanías",
+        ],
+        "ZONA 3 GUAVIARE": ["Guaviare Central", "Guaviare Jerusalén"],
+        "ZONA 4 CASANARE": [
+            "Yopal Central",
+            "Yopal Efeso",
+            "Aguazul",
+            "Paz de Ariporo",
+        ],
+    };
+
+    const handleDistrictChange = (e) => {
+        const value = e.target.value;
+        if (value === "Otro") {
+            setIsOtro(true);
+            handleChange({ target: { id: "district", value: "" } });
+        } else {
+            setIsOtro(false);
+            handleChange({ target: { id: "district", value } });
+        }
     };
 
 
@@ -331,20 +381,42 @@ const RoomDetails = () => {
                                     </div>
 
                                     <div>
-                                        <label
-                                            htmlFor="district"
-                                            className="block text-sm font-medium"
-                                        >
+                                        <label htmlFor="district" className="block text-sm font-medium mb-1">
                                             Distrito al que pertenece
                                         </label>
-                                        <input
+
+                                        <select
                                             id="district"
-                                            value={formData.district}
-                                            onChange={handleChange}
-                                            placeholder="Ej: Villavicencio - Central"
-                                            type="text"
+                                            value={isOtro ? "Otro" : formData.district}
+                                            onChange={handleDistrictChange}
                                             className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                                        />
+                                        >
+                                            <option value="">Seleccione un distrito...</option>
+                                            {Object.entries(zonas).map(([zona, distritos]) => (
+                                                <optgroup key={zona} label={zona}>
+                                                    {distritos.map((distrito) => (
+                                                        <option key={distrito} value={distrito}>
+                                                            {distrito}
+                                                        </option>
+                                                    ))}
+                                                </optgroup>
+                                            ))}
+                                            <option value="Otro">Otro...</option>
+                                        </select>
+
+                                        {isOtro && (
+                                            <input
+                                                type="text"
+                                                id="district"
+                                                placeholder="Escriba su distrito"
+                                                value={otroDistrito}
+                                                onChange={(e) => {
+                                                    setOtroDistrito(e.target.value);
+                                                    handleChange({ target: { id: "district", value: e.target.value } });
+                                                }}
+                                                className="mt-2 block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                                            />
+                                        )}
                                     </div>
 
                                     {/* 📅 Fechas de reservación */}
