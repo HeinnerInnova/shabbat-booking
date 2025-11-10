@@ -19,7 +19,7 @@ const Footer = () => {
                             <span>Sede Campestre Shabbat</span>
                         </a>
                         <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Brindando cuidado y confort a nuestros mayores con dedicación y amor.
+                            Disfruta tu estadía en la Sede Campestre Shabbat: un lugar para descansar, renovar y conectar con Dios.
                         </p>
                     </div>
 
@@ -81,16 +81,20 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* REDES SOCIALES */}
+                    {/* 🌐 REDES SOCIALES */}
                     <div>
                         <p className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
                             Síguenos
                         </p>
+
                         <div className="flex gap-4">
-                            {/* Twitter */}
+                            {/* Facebook */}
                             <a
-                                className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary"
-                                href="#"
+                                href="https://www.facebook.com/iasdasollanos/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Facebook"
+                                className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors"
                             >
                                 <svg
                                     className="h-6 w-6"
@@ -98,14 +102,17 @@ const Footer = () => {
                                     viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg"
                                 >
-                                    <path d="M22.46 6c-.77.35-1.6.58-2.46.67.88-.53 1.56-1.37 1.88-2.38-.83.49-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98-3.56-.18-6.72-1.88-8.84-4.48-.37.63-.58 1.37-.58 2.15 0 1.49.76 2.81 1.91 3.58-.7-.02-1.36-.21-1.94-.53v.05c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.33 1.84c-.35 0-.69-.02-1.03-.06A12.02 12.02 0 0 0 8.29 20c7.55 0 11.68-6.25 11.68-11.68l-.01-.53c.8-.58 1.49-1.3 2.04-2.13z" />
+                                    <path d="M22.676 0H1.324C.593 0 0 .593 0 1.324v21.352C0 23.407.593 24 1.324 24h11.505v-9.294H9.691v-3.622h3.138V8.413c0-3.1 1.893-4.788 4.657-4.788 1.324 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116C23.407 24 24 23.407 24 22.676V1.324C24 .593 23.407 0 22.676 0z" />
                                 </svg>
                             </a>
 
                             {/* Instagram */}
                             <a
-                                className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary"
-                                href="#"
+                                href="https://www.instagram.com/adventistasllanosorientales"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Instagram"
+                                className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors"
                             >
                                 <svg
                                     className="h-6 w-6"
@@ -116,23 +123,9 @@ const Footer = () => {
                                     <path d="M18.2 2H5.8C3.7 2 2 3.7 2 5.8v12.4C2 20.3 3.7 22 5.8 22h12.4c2.1 0 3.8-1.7 3.8-3.8V5.8C22 3.7 20.3 2 18.2 2zM12 18.2c-3.4 0-6.2-2.8-6.2-6.2s2.8-6.2 6.2-6.2 6.2 2.8 6.2 6.2-2.8 6.2-6.2 6.2zM18.2 7.8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
                                 </svg>
                             </a>
-
-                            {/* LinkedIn */}
-                            <a
-                                className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary"
-                                href="#"
-                            >
-                                <svg
-                                    className="h-6 w-6"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8.5 18.5h-3v-9h3v9zm-1.5-10.2c-.9 0-1.7-.7-1.7-1.7s.7-1.7 1.7-1.7 1.7.7 1.7 1.7-.8 1.7-1.7 1.7zm12 10.2h-3v-4.4c0-1.1-.4-1.8-1.3-1.8-.7 0-1.2.5-1.4.9-.1.2-.1.4-.1.6v4.7h-3v-9h3v1.3c.4-.6 1-1.4 2.5-1.4 1.8 0 3.2 1.2 3.2 3.8v5.3z" />
-                                </svg>
-                            </a>
                         </div>
                     </div>
+
                 </div>
 
                 {/* COPYRIGHT */}
