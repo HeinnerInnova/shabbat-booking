@@ -9,6 +9,7 @@ const ViewRequests = () => {
         {
             formData: {
                 name: "Fernando Mayorga Morales",
+                documentNumber: '1152469087',
                 email: "heinner45@gmail.com",
                 phone: "3222277857",
                 district: "Campohermoso - Bucaramanga",
@@ -78,6 +79,7 @@ const ViewRequests = () => {
         {
             formData: {
                 name: "Janeth Contramaestre",
+                documentNumber: '1152469087',
                 email: "heinner45@gmail.com",
                 phone: "3222277857",
                 district: "Campohermoso - Bucaramanga",
@@ -148,7 +150,22 @@ const ViewRequests = () => {
 
     // dentro del componente principal:
     const [selectedReservation, setSelectedReservation] = useState(null);
-    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [showDetailsModal, setShowDetailsModal,] = useState(false);
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+    const handleCloseAllReservations = () => {
+        setShowConfirmModal(false);
+
+        // Aquí puedes poner tu lógica para cerrar todas las reservas:
+        // por ejemplo, una llamada a tu API o limpieza de estado.
+        alert("✅ Todas las reservas fueron cerradas y las camas están disponibles.");
+
+        // Ejemplo si usas un backend:
+        // await fetch("/api/close-all-reservations", { method: "POST" });
+    };
+
+
 
     const handleViewDetails = (reserva) => {
         const { formData, habitacion, selectedBeds, dates } = reserva;
@@ -156,7 +173,7 @@ const ViewRequests = () => {
         // 🧩 Unificamos toda la info que el modal necesita
         const formattedReservation = {
             nombreCompleto: formData.name,
-            documento: formData.document || "No registrado",
+            documentNumber: formData.documentNumber || "No registrado",
             correo: formData.email,
             telefono: formData.phone,
             genero: formData.gender,
@@ -261,8 +278,8 @@ const ViewRequests = () => {
                                 </label>
                             </div>
 
-                            {/* 🧩 Botón desplegable simple (sin menú aún) */}
-                            <div className="flex gap-3 items-center">
+                            {/* 🧩 Filtros adicionales */}
+                            <div className="flex gap-3 items-center flex-wrap">
                                 <select
                                     className="flex h-12 items-center rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700 px-4 text-sm text-gray-900 dark:text-white"
                                     value={selectedHome}
@@ -290,8 +307,47 @@ const ViewRequests = () => {
                                         setDateRange((prev) => ({ ...prev, end: e.target.value }))
                                     }
                                 />
+
+                                {/* 🧨 Botón rojo para cerrar reservas */}
+                                <button
+                                    onClick={() => setShowConfirmModal(true)}
+                                    className="h-12 px-5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold text-sm shadow-sm transition-colors"
+                                >
+                                    Cerrar todas las reservas
+                                </button>
                             </div>
                         </div>
+                        {/* ⚠️ Modal de confirmación */}
+                        {showConfirmModal && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg w-full max-w-md p-6">
+                                    <h3 className="text-lg font-bold text-red-600 mb-2">
+                                        ⚠️ Confirmar acción
+                                    </h3>
+                                    <p className="text-slate-700 dark:text-slate-300 text-sm mb-5 leading-relaxed">
+                                        Estás a punto de cerrar <strong>todas las reservas activas</strong>.
+                                        Esto dejará <strong>todas las camas de los hogares disponibles</strong>.
+                                        <br />
+                                        ¿Deseas continuar?
+                                    </p>
+
+                                    <div className="flex justify-end gap-3">
+                                        <button
+                                            onClick={() => setShowConfirmModal(false)}
+                                            className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-800 dark:text-gray-200"
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button
+                                            onClick={handleCloseAllReservations}
+                                            className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-700 text-white"
+                                        >
+                                            Sí, cerrar todas
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Reservations Table */}
                         <div className="mt-6 bg-white dark:bg-[#18232e] rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto">

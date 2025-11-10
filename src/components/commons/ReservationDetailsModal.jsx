@@ -20,7 +20,7 @@ const ReservationDetailsModal = ({ isOpen, onClose, reservation }) => {
 
                 <div className="space-y-3 text-sm">
                     <Detail label="Nombre completo" value={reservation.nombreCompleto} />
-                    <Detail label="Documento" value={reservation.documento} />
+                    <Detail label="Documento" value={reservation.documentNumber} />
                     <Detail label="Correo electrónico" value={reservation.correo} />
                     <Detail label="Número de teléfono" value={reservation.telefono} />
                     <Detail label="Género" value={reservation.genero} />

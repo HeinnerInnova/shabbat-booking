@@ -9,6 +9,7 @@ const ManageRequest = () => {
     {
       formData: {
         name: "Fernando Mayorga Morales",
+        documentNumber: '1152469087',
         email: "heinner45@gmail.com",
         phone: "3222277857",
         district: "Campohermoso - Bucaramanga",
@@ -130,6 +131,7 @@ const ManageRequest = () => {
     {
       formData: {
         name: "Janeth Contramaestre",
+        documentNumber: '1152469087',
         email: "heinner45@gmail.com",
         phone: "3222277857",
         district: "Campohermoso - Bucaramanga",
@@ -260,7 +262,7 @@ const ManageRequest = () => {
     // 🧩 Unificamos toda la info que el modal necesita
     const formattedReservation = {
       nombreCompleto: formData.name,
-      documento: formData.document || "No registrado",
+      documentNumber: formData.documentNumber || "No registrado",
       correo: formData.email,
       telefono: formData.phone,
       genero: formData.gender,

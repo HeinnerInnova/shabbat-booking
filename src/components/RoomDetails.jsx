@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Header from "./commons/Header";
 import Footer from "./commons/Footer";
 import HeadConfig from "./commons/HeadConfig";
+import Swal from "sweetalert2";
 
 const RoomDetails = () => {
     const location = useLocation();
@@ -51,41 +52,66 @@ const RoomDetails = () => {
 
     // 🚀 Enviar datos al success
     const navToSuccess = () => {
-        // Campos requeridos del formulario
-        const requiredFields = ["name", "email", "phone", "district", "gender", "age"];
-        const emptyFields = requiredFields.filter((field) => !formData[field]?.trim());
+        // Campos requeridos con etiquetas legibles
+        const requiredFields = {
+            name: "Nombre completo",
+            email: "Correo electrónico",
+            phone: "Teléfono",
+            district: "Distrito o barrio",
+            gender: "Género",
+            age: "Edad",
+            documentType: "Tipo de documento",
+            documentNumber: "Número de documento",
+        };
 
-        // Validar fechas
+        // Detectar cuáles están vacíos
+        const emptyFields = Object.entries(requiredFields)
+            .filter(([key]) => !formData[key]?.trim())
+            .map(([, label]) => label);
+
+        // Validaciones adicionales
         const fechasIncompletas = !fechas?.desde || !fechas?.hasta;
-
-        // Validar selección de camas
         const sinCamasSeleccionadas = !selectedBeds || selectedBeds.length === 0;
 
-        // Validar que haya al menos una cama disponible en la habitación
         const hayCamasDisponibles = detalleHabitacion?.camarotes?.some((camarote) =>
             camarote.camas?.some((cama) => cama.estado === "D")
         );
 
-        // Construir mensaje de error si hay problemas
+        // ⚠️ Mostrar advertencia si falta algo
         if (emptyFields.length > 0 || fechasIncompletas || sinCamasSeleccionadas) {
-            let mensaje = "Por favor completa todos los campos obligatorios:\n";
+            let htmlMensaje = `<ul class="text-left mt-2">`;
 
             if (emptyFields.length > 0) {
-                mensaje += `• ${emptyFields.join(", ")}\n`;
+                htmlMensaje += `<li>• Completa los campos obligatorios: <b>${emptyFields.join(", ")}</b></li>`;
             }
 
             if (fechasIncompletas) {
-                mensaje += "• Selecciona el rango de fechas\n";
+                htmlMensaje += `<li>• Selecciona el rango de fechas</li>`;
             }
 
             if (!hayCamasDisponibles) {
-                mensaje += "• No hay camas disponibles en esta habitación\n";
+                htmlMensaje += `<li>• No hay camas disponibles en esta habitación</li>`;
             } else if (sinCamasSeleccionadas) {
-                mensaje += "• Selecciona al menos una cama disponible\n";
+                htmlMensaje += `<li>• Selecciona al menos una cama disponible</li>`;
             }
 
-            alert(mensaje);
-            return; // 🚫 Detener ejecución si faltan datos
+            htmlMensaje += `</ul>`;
+
+            Swal.fire({
+                icon: "warning",
+                title: "Datos incompletos",
+                html: htmlMensaje,
+                confirmButtonText: "Entendido",
+                confirmButtonColor: "#3B82F6",
+                background: document.documentElement.classList.contains("dark")
+                    ? "#1E293B"
+                    : "#FFFFFF",
+                color: document.documentElement.classList.contains("dark")
+                    ? "#F1F5F9"
+                    : "#0F172A",
+            });
+
+            return; // 🚫 Detener ejecución
         }
 
         // ✅ Si todo está completo, navegar al success
@@ -100,8 +126,6 @@ const RoomDetails = () => {
 
         navigate("/success", { state });
     };
-
-
 
 
     return (

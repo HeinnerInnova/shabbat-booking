@@ -3,6 +3,7 @@ import { useState } from "react";
 import Header from "./commons/Header.jsx";
 import Footer from "./commons/Footer.jsx";
 import HeadConfig from "./commons/HeadConfig.jsx";
+import Swal from "sweetalert2";
 
 const Home = () => {
 
@@ -23,9 +24,29 @@ const Home = () => {
   const navToDisponibility = async (hogar, habitaciones) => {
     try {
       const fechas = selectedDates[hogar] || {};
+      const { desde, hasta } = fechas;
+
       // Validar que las fechas estén seleccionadas
-      if (!fechas.desde || !fechas.hasta) {
-        alert("Por favor selecciona ambas fechas antes de continuar");
+      if (!desde || !hasta) {
+        Swal.fire({
+          icon: "warning",
+          title: "Fechas incompletas",
+          text: "Por favor selecciona ambas fechas antes de continuar.",
+          confirmButtonColor: "#3B82F6", // azul tailwind
+          confirmButtonText: "Entendido",
+        });
+        return;
+      }
+
+      // Validar que la fecha desde no sea mayor a la fecha hasta
+      if (new Date(desde) > new Date(hasta)) {
+        Swal.fire({
+          icon: "error",
+          title: "Rango de fechas inválido",
+          text: "La fecha inicial no puede ser posterior a la fecha final.",
+          confirmButtonColor: "#EF4444", // rojo tailwind
+          confirmButtonText: "Corregir",
+        });
         return;
       }
 
@@ -232,26 +253,31 @@ const Home = () => {
                     <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-6 flex-1">{desc}</p>
 
                     {/* Selector de fechas */}
-                    <div className="flex gap-2 mb-4">
-                      <div className="flex flex-col">
-                        <label className="text-xs text-slate-600 dark:text-slate-300">Desde</label>
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-5">
+                      <div className="flex flex-col flex-1">
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Desde
+                        </label>
                         <input
                           type="date"
                           value={selectedDates[hogar]?.desde || ""}
                           onChange={(e) => handleDateChange(hogar, "desde", e.target.value)}
-                          className="border rounded-lg px-2 py-1 text-sm text-slate-800 dark:text-slate-50 dark:bg-slate-800"
+                          className="border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2.5 text-base text-slate-800 dark:text-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
                         />
                       </div>
-                      <div className="flex flex-col">
-                        <label className="text-xs text-slate-600 dark:text-slate-300">Hasta</label>
+                      <div className="flex flex-col flex-1">
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Hasta
+                        </label>
                         <input
                           type="date"
                           value={selectedDates[hogar]?.hasta || ""}
                           onChange={(e) => handleDateChange(hogar, "hasta", e.target.value)}
-                          className="border rounded-lg px-2 py-1 text-sm text-slate-800 dark:text-slate-50 dark:bg-slate-800"
+                          className="border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2.5 text-base text-slate-800 dark:text-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
                         />
                       </div>
                     </div>
+
 
                     {/* Botón de acción */}
                     <button
