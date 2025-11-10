@@ -42,7 +42,7 @@ const Success = () => {
             })
             .join(" / ");
 
-        return `Camas seleccionadas: ${descripcion}`;
+        return `${descripcion}`;
     };
 
     const navToHome = () => {
@@ -92,6 +92,14 @@ const Success = () => {
                                             </p>
                                             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
                                                 {reservationDetails.formData.name}
+                                            </p>
+                                        </div>
+                                        <div className="flex justify-between items-center gap-x-4 py-3">
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                                                {reservationDetails.formData.documentType}
+                                            </p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
+                                                {reservationDetails.formData.documentNumber}
                                             </p>
                                         </div>
                                         <div className="flex justify-between items-center gap-x-4 py-3">

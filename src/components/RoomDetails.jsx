@@ -17,6 +17,8 @@ const RoomDetails = () => {
         district: "",
         gender: "",
         age: "",
+        documentType: "",
+        documentNumber: ""
     });
 
     // 🧩 Estado de camas seleccionadas
@@ -49,18 +51,57 @@ const RoomDetails = () => {
 
     // 🚀 Enviar datos al success
     const navToSuccess = () => {
+        // Campos requeridos del formulario
+        const requiredFields = ["name", "email", "phone", "district", "gender", "age"];
+        const emptyFields = requiredFields.filter((field) => !formData[field]?.trim());
+
+        // Validar fechas
+        const fechasIncompletas = !fechas?.desde || !fechas?.hasta;
+
+        // Validar selección de camas
+        const sinCamasSeleccionadas = !selectedBeds || selectedBeds.length === 0;
+
+        // Validar que haya al menos una cama disponible en la habitación
+        const hayCamasDisponibles = detalleHabitacion?.camarotes?.some((camarote) =>
+            camarote.camas?.some((cama) => cama.estado === "D")
+        );
+
+        // Construir mensaje de error si hay problemas
+        if (emptyFields.length > 0 || fechasIncompletas || sinCamasSeleccionadas) {
+            let mensaje = "Por favor completa todos los campos obligatorios:\n";
+
+            if (emptyFields.length > 0) {
+                mensaje += `• ${emptyFields.join(", ")}\n`;
+            }
+
+            if (fechasIncompletas) {
+                mensaje += "• Selecciona el rango de fechas\n";
+            }
+
+            if (!hayCamasDisponibles) {
+                mensaje += "• No hay camas disponibles en esta habitación\n";
+            } else if (sinCamasSeleccionadas) {
+                mensaje += "• Selecciona al menos una cama disponible\n";
+            }
+
+            alert(mensaje);
+            return; // 🚫 Detener ejecución si faltan datos
+        }
+
+        // ✅ Si todo está completo, navegar al success
         const state = {
             reservationDetails: {
                 formData,
                 selectedBeds,
                 dates: { startDate: fechas.desde, endDate: fechas.hasta },
                 habitacion: detalleHabitacion,
-            }
-        }
-        navigate("/success", {
-            state,
-        });
+            },
+        };
+
+        navigate("/success", { state });
     };
+
+
 
 
     return (
@@ -196,6 +237,47 @@ const RoomDetails = () => {
                                         />
                                     </div>
 
+                                    {/* 🪪 Tipo de documento */}
+                                    <div>
+                                        <label
+                                            htmlFor="documentType"
+                                            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                        >
+                                            Tipo de documento
+                                        </label>
+                                        <select
+                                            id="documentType"
+                                            value={formData.documentType}
+                                            onChange={handleChange}
+                                            className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                                        >
+                                            <option value="">Seleccionar</option>
+                                            <option>Cédula de Ciudadanía</option>
+                                            <option>Tarjeta de Identidad</option>
+                                            <option>Cédula de Extranjería</option>
+                                            <option>Pasaporte</option>
+                                            <option>Registro Civil</option>
+                                        </select>
+                                    </div>
+
+                                    {/* 🔢 Número de documento */}
+                                    <div>
+                                        <label
+                                            htmlFor="documentNumber"
+                                            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                        >
+                                            Número de documento
+                                        </label>
+                                        <input
+                                            id="documentNumber"
+                                            value={formData.documentNumber}
+                                            onChange={handleChange}
+                                            placeholder="Ej: 1.234.567.890"
+                                            type="text"
+                                            className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                                        />
+                                    </div>
+
                                     <div>
                                         <label htmlFor="email" className="block text-sm font-medium">
                                             Email
@@ -241,7 +323,7 @@ const RoomDetails = () => {
                                         />
                                     </div>
 
-                                    {/* 📅 Rango de fechas */}
+                                    {/* 📅 Fechas de reservación */}
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                                             Fechas de reservación
@@ -251,11 +333,11 @@ const RoomDetails = () => {
                                             <p className="mt-1 text-base font-semibold text-slate-900 dark:text-slate-100">
                                                 Del{" "}
                                                 <span className="text-primary">
-                                                    {new Date(`${fechas.desde}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
+                                                    {new Date(`${fechas.desde}T00:00:00Z`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
                                                 </span>{" "}
                                                 al{" "}
                                                 <span className="text-primary">
-                                                    {new Date(`${fechas.hasta}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
+                                                    {new Date(`${fechas.hasta}T00:00:00Z`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
                                                 </span>
                                             </p>
                                         ) : (
@@ -264,7 +346,6 @@ const RoomDetails = () => {
                                             </p>
                                         )}
                                     </div>
-
 
                                     <div>
                                         <label htmlFor="gender" className="block text-sm font-medium">
@@ -298,6 +379,7 @@ const RoomDetails = () => {
                                     </div>
                                 </form>
                             </div>
+
 
                             <div className="border-t border-slate-200 dark:border-slate-800" />
 
