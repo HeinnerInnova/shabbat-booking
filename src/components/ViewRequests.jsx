@@ -3,6 +3,7 @@ import HeaderManage from './commons/HeaderManage.jsx';
 import ReservationDetailsModal from "./commons/ReservationDetailsModal.jsx";
 import SideBar from './commons/SideBar';
 import { useState } from 'react';
+import Swal from "sweetalert2";
 
 const ViewRequests = () => {
     const activesReservations = [
@@ -164,6 +165,49 @@ const ViewRequests = () => {
         // Ejemplo si usas un backend:
         // await fetch("/api/close-all-reservations", { method: "POST" });
     };
+
+    const handleCloseReservation = async (reserva) => {
+        const result = await Swal.fire({
+            title: "¿Finalizar Reservación?",
+            text: `¿Estás seguro de que deseas finalizar la reserva de ${reserva.name || "este huésped"}?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Sí, finalizar",
+            cancelButtonText: "Cancelar",
+            background: "#fff",
+            color: "#333",
+        });
+
+        if (result.isConfirmed) {
+            try {
+                // Aquí puedes realizar la acción (API, estado, etc.)
+                // Por ejemplo:
+                // await fetch(`/api/reservations/${reserva.id}/close`, { method: "POST" });
+
+                await Swal.fire({
+                    icon: "success",
+                    title: "Reservación finalizada",
+                    text: "La reserva ha sido marcada como finalizada correctamente.",
+                    confirmButtonColor: "#198754",
+                    background: "#fff",
+                    color: "#333",
+                });
+
+                // Aquí puedes actualizar la lista de reservas activas si lo necesitas
+                // refreshReservations();
+            } catch (error) {
+                await Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Hubo un problema al intentar finalizar la reserva.",
+                    confirmButtonColor: "#d33",
+                });
+            }
+        }
+    };
+
 
 
 
@@ -418,7 +462,13 @@ const ViewRequests = () => {
                                                 </td>
                                                 <td className="p-4 text-right">
                                                     <div className="flex justify-end items-center gap-2">
-                                                        <button className="flex items-center justify-center size-8 rounded-lg bg-danger/10 text-danger hover:bg-danger/20">
+
+                                                        {/* ❌ Cerrar / Finalizar Reserva */}
+                                                        <button
+                                                            onClick={() => handleCloseReservation(reserva)}
+                                                            title="Finalizar Reservación"
+                                                            className="flex items-center justify-center size-8 rounded-lg bg-danger/10 text-danger hover:bg-danger/20"
+                                                        >
                                                             <span
                                                                 className="material-symbols-outlined"
                                                                 style={{ fontSize: 18 }}
@@ -426,7 +476,13 @@ const ViewRequests = () => {
                                                                 close
                                                             </span>
                                                         </button>
-                                                        <button onClick={() => handleViewDetails(reserva)} className="flex items-center justify-center size-8 rounded-lg bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+
+                                                        {/* 👁️ Ver detalles */}
+                                                        <button
+                                                            onClick={() => handleViewDetails(reserva)}
+                                                            title="Detalles de la Reserva"
+                                                            className="flex items-center justify-center size-8 rounded-lg bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                                                        >
                                                             <span
                                                                 className="material-symbols-outlined"
                                                                 style={{ fontSize: 18 }}
@@ -434,8 +490,10 @@ const ViewRequests = () => {
                                                                 visibility
                                                             </span>
                                                         </button>
+
                                                     </div>
                                                 </td>
+
                                             </tr>
                                         );
                                     })}

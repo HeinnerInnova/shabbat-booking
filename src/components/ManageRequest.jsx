@@ -3,6 +3,7 @@ import HeaderManage from "./commons/HeaderManage.jsx";
 import SideBar from "./commons/SideBar.jsx";
 import ReservationDetailsModal from "./commons/ReservationDetailsModal.jsx";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 const ManageRequest = () => {
   const pendingReservations = [
@@ -323,6 +324,81 @@ const ManageRequest = () => {
     return matchesNameOrHome && matchesHome && matchesDate;
   });
 
+
+
+  // ✅ Función para aprobar una reserva
+  const handleApprove = (reserva) => {
+    Swal.fire({
+      title: "¿Aprobar reservación?",
+      text: `Estás a punto de aprobar la reserva de ${reserva.formData?.name || "este solicitante"}.`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, aprobar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#22C55E", // verde tailwind
+      cancelButtonColor: "#6B7280", // gris tailwind
+      background: document.documentElement.classList.contains("dark")
+        ? "#1E293B"
+        : "#FFFFFF",
+      color: document.documentElement.classList.contains("dark")
+        ? "#F1F5F9"
+        : "#0F172A",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 👉 Aquí puedes agregar la lógica real de aprobación (API o cambio de estado)
+        Swal.fire({
+          icon: "success",
+          title: "Reserva aprobada",
+          text: "La reserva fue aprobada exitosamente.",
+          confirmButtonColor: "#22C55E",
+          background: document.documentElement.classList.contains("dark")
+            ? "#1E293B"
+            : "#FFFFFF",
+          color: document.documentElement.classList.contains("dark")
+            ? "#F1F5F9"
+            : "#0F172A",
+        });
+      }
+    });
+  };
+
+  // ❌ Función para rechazar una reserva
+  const handleReject = (reserva) => {
+    Swal.fire({
+      title: "¿Rechazar reservación?",
+      text: `Estás a punto de rechazar la reserva de ${reserva.formData?.name || "este solicitante"}.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, rechazar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#EF4444", // rojo tailwind
+      cancelButtonColor: "#6B7280", // gris
+      background: document.documentElement.classList.contains("dark")
+        ? "#1E293B"
+        : "#FFFFFF",
+      color: document.documentElement.classList.contains("dark")
+        ? "#F1F5F9"
+        : "#0F172A",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 👉 Aquí puedes agregar la lógica real de rechazo (API o cambio de estado)
+        Swal.fire({
+          icon: "success",
+          title: "Reserva rechazada",
+          text: "La reserva fue rechazada correctamente.",
+          confirmButtonColor: "#EF4444",
+          background: document.documentElement.classList.contains("dark")
+            ? "#1E293B"
+            : "#FFFFFF",
+          color: document.documentElement.classList.contains("dark")
+            ? "#F1F5F9"
+            : "#0F172A",
+        });
+      }
+    });
+  };
+
+
   return (
     <>
       <HeadConfig />
@@ -469,32 +545,41 @@ const ManageRequest = () => {
                         </td>
                         <td className="p-4 text-right">
                           <div className="flex justify-end items-center gap-2">
-                            <button className="flex items-center justify-center size-8 rounded-lg bg-success/10 text-success hover:bg-success/20">
-                              <span
-                                className="material-symbols-outlined"
-                                style={{ fontSize: 18 }}
-                              >
+                            {/* ✅ Aprobar reserva */}
+                            <button
+                              title="Aprobar Reservación"
+                              onClick={() => handleApprove(reserva)}
+                              className="flex items-center justify-center size-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors"
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                                 check
                               </span>
                             </button>
-                            <button className="flex items-center justify-center size-8 rounded-lg bg-danger/10 text-danger hover:bg-danger/20">
-                              <span
-                                className="material-symbols-outlined"
-                                style={{ fontSize: 18 }}
-                              >
+
+                            {/* ❌ Rechazar reserva */}
+                            <button
+                              title="Rechazar Reservación"
+                              onClick={() => handleReject(reserva)}
+                              className="flex items-center justify-center size-8 rounded-lg bg-danger/10 text-danger hover:bg-danger/20 transition-colors"
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                                 close
                               </span>
                             </button>
-                            <button onClick={() => handleViewDetails(reserva)} className="flex items-center justify-center size-8 rounded-lg bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
-                              <span
-                                className="material-symbols-outlined"
-                                style={{ fontSize: 18 }}
-                              >
+
+                            {/* 👁️ Ver detalles */}
+                            <button
+                              title="Detalles de la Reserva"
+                              onClick={() => handleViewDetails(reserva)}
+                              className="flex items-center justify-center size-8 rounded-lg bg-gray-200/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                                 visibility
                               </span>
                             </button>
                           </div>
                         </td>
+
                       </tr>
                     );
                   })}
