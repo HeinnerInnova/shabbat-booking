@@ -374,11 +374,16 @@ const RoomDetails = () => {
                                             id="phone"
                                             value={formData.phone}
                                             onChange={handleChange}
-                                            placeholder="Ej: +57 316 1234 567"
-                                            type="tel"
+                                            onInput={(e) => {
+                                                e.target.value = e.target.value.replace(/[^0-9]/g, ""); // Solo números
+                                            }}
+                                            placeholder="Ej: 3161234567"
+                                            type="text"
+                                            inputMode="numeric"
                                             className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
                                         />
                                     </div>
+
 
                                     <div>
                                         <label htmlFor="district" className="block text-sm font-medium mb-1">
@@ -468,11 +473,16 @@ const RoomDetails = () => {
                                             id="age"
                                             value={formData.age}
                                             onChange={handleChange}
+                                            onInput={(e) => {
+                                                e.target.value = e.target.value.replace(/[^0-9]/g, ""); // Solo números
+                                            }}
                                             placeholder="Ej: 75"
-                                            type="number"
+                                            type="text"
+                                            inputMode="numeric"
                                             className="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
                                         />
                                     </div>
+
                                 </form>
                             </div>
 
