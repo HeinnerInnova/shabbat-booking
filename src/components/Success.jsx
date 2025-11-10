@@ -71,6 +71,20 @@ const Success = () => {
                                         continuación y completa el pago para asegurar tu plaza.
                                     </p>
                                 </div>
+                                <div className="rounded-lg bg-amber-100 dark:bg-amber-500/10 p-4">
+                                    <div className="flex items-start gap-3">
+
+                                        <div className="flex-1">
+                                            <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                                                Aviso Importante
+                                            </h4>
+                                            <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
+                                                El pago debe realizarse en las próximas 48 horas. De lo
+                                                contrario, la reserva será cancelada automáticamente.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div className="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-6 sm:p-8">
                                 <div className="flex flex-col gap-4">
@@ -133,24 +147,6 @@ const Success = () => {
                                             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
                                                 {generarDescripcionCamas(reservationDetails.selectedBeds)}
                                             </p>
-                                        </div>
-                                    </div>
-                                    <div className="rounded-lg bg-amber-100 dark:bg-amber-500/10 p-4">
-                                        <div className="flex items-start gap-3">
-                                            <div className="flex-shrink-0">
-                                                <span className="material-symbols-outlined text-xl text-amber-600 dark:text-amber-400">
-                                                    warning
-                                                </span>
-                                            </div>
-                                            <div className="flex-1">
-                                                <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
-                                                    Aviso Importante
-                                                </h4>
-                                                <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
-                                                    El pago debe realizarse en las próximas 48 horas. De lo
-                                                    contrario, la reserva será cancelada automáticamente.
-                                                </p>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
