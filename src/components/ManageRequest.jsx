@@ -63,37 +63,47 @@ const ManageRequest = () => {
 
 
   const handleViewDetails = (reserva) => {
-    const { formData, habitacion, selectedBeds, dates } = reserva;
+    // Extraemos los niveles de datos
+    const bloque = reserva.bloques?.[0];
+    const habitacion = bloque?.habitaciones?.[0];
+    const camarotes = habitacion?.camarotes || [];
 
-    // 🧩 Unificamos toda la info que el modal necesita
+    // Construimos la lista de camas
+    const camasReservadas = camarotes
+      .map(
+        (camarote) =>
+          `Camarote ${camarote.posicion} - Cama(s): ${camarote.camas
+            .map((c) => c.posicion)
+            .join(", ")}`
+      )
+      .join("; ");
+
+    // Formateamos las fechas
+    const fechaIngreso = new Date(`${reserva.fechaInicio}T00:00:00`).toLocaleDateString();
+    const fechaSalida = new Date(`${reserva.fechaFin}T00:00:00`).toLocaleDateString();
+
+    // Creamos el objeto que se enviará al modal
     const formattedReservation = {
-      nombreCompleto: formData.name,
-      documentNumber: formData.documentNumber || "No registrado",
-      correo: formData.email,
-      telefono: formData.phone,
-      genero: formData.gender,
-      distrito: formData.district,
-      fechaIngreso: new Date(`${dates.startDate}T00:00:00`).toLocaleDateString(),
-      fechaSalida: new Date(`${dates.endDate}T00:00:00`).toLocaleDateString(),
-      hogar:
-        habitacion.hogar === "V"
-          ? "Hogar de Varones"
-          : "Hogar de Señoritas",
-      numeroHabitación: habitacion.numeroHabitación,
-      cantidadCamas: selectedBeds.length,
-      estado: "Pendiente",
-      camasReservadas: selectedBeds
-        .map(
-          (bed) =>
-            `Camarote ${bed.camarote.numeroCamarote} - Cama ${bed.cama.numeroCama} (${bed.cama.ubicación})`
-        )
-        .join(", "),
-
+      nombreCompleto: reserva.nombreCompleto,
+      documentNumber: reserva.documentNumber || "No registrado",
+      correo: reserva.correo || "No registrado",
+      telefono: reserva.telefono || "No registrado",
+      genero: reserva.genero || "No especificado",
+      distrito: reserva.distrito || "No registrado",
+      fechaIngreso,
+      fechaSalida,
+      hogar: bloque ? `Hogar de ${bloque.nombre}` : "No asignado",
+      numeroHabitación: habitacion ? habitacion.posicion : "-",
+      cantidadCamas: camarotes.reduce((acc, c) => acc + (c.camas?.length || 0), 0),
+      estado: reserva.estado || "Pendiente",
+      camasReservadas: camasReservadas || "Sin asignar",
     };
 
+    // Actualizamos el estado
     setSelectedReservation(formattedReservation);
     setShowDetailsModal(true);
   };
+
 
 
   const handleCloseDetails = () => {
