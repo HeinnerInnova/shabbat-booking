@@ -21,7 +21,7 @@ const ManageRequest = () => {
 
       // 🌀 Mostrar pantalla de carga
       Swal.fire({
-        title: "Consultando disponibilidad...",
+        title: "Consultando reservas...",
         html: "Por favor espera unos segundos.",
         allowOutsideClick: false,
         allowEscapeKey: false,
