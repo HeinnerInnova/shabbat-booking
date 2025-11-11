@@ -18,14 +18,12 @@ export default function Disponibility() {
 
   if (!habitacionesHogar) return null;
 
-  const habitaciones = habitacionesHogar.map(el => ({ ...el, hogar }))
-
   /**
    * Determina el estado general de la habitación.
    */
   const getEstadoHabitacion = (habitacion) => {
     const camas = habitacion.camarotes.flatMap((c) => c.camas);
-    const disponibles = camas.filter((c) => c.estado === "D").length;
+    const disponibles = camas.filter((c) => c.disponible).length;
 
     if (disponibles === camas.length)
       return { label: "Disponible", color: "green-status" };
@@ -38,7 +36,7 @@ export default function Disponibility() {
    */
   const getDisponibilidadTexto = (habitacion) => {
     const camas = habitacion.camarotes.flatMap((c) => c.camas);
-    const disponibles = camas.filter((c) => c.estado === "D").length;
+    const disponibles = camas.filter((c) => c.disponible).length;
 
     if (disponibles === 0) return "Completa";
     return `${disponibles} de ${camas.length} camas disponibles`;
@@ -83,7 +81,7 @@ export default function Disponibility() {
   /**
    * Aplica el filtro según la selección actual
    */
-  const habitacionesFiltradas = habitaciones.filter((habitacion) => {
+  const habitacionesFiltradas = habitacionesHogar.filter((habitacion) => {
     const { label } = getEstadoHabitacion(habitacion);
 
     if (filtro === "Disponibles") return label === "Disponible";
@@ -113,7 +111,7 @@ export default function Disponibility() {
                   })}
                 </p>
                 <p className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">
-                  Hogar de {hogar === 'V' ? 'Varones' : 'Señoritas'} - {habitaciones.length} Habitaciones
+                  Hogar de {hogar === 'V' ? 'Varones' : 'Señoritas'} - {habitacionesHogar.length} Habitaciones
                 </p>
               </div>
             </div>
@@ -154,13 +152,13 @@ export default function Disponibility() {
 
                 return (
                   <div
-                    key={habitacion.numeroHabitación}
+                    key={habitacion.posicion}
                     className="flex flex-col gap-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 transition-shadow hover:shadow-lg"
                   >
                     {/* Header */}
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        Habitación {habitacion.numeroHabitación}
+                        Habitación {habitacion.posicion}
                       </h3>
                       <div className="flex items-center gap-2">
                         <span className={`text-sm font-medium text-${estado.color}`}>
@@ -177,13 +175,13 @@ export default function Disponibility() {
                         {habitacion.camarotes.map((camarote) =>
                           camarote.camas.map((cama, i) => (
                             <div
-                              key={`${habitacion.numeroHabitación}-${camarote.numeroCamarote}-${cama.ubicación}-${i}`}
+                              key={`${habitacion.posicion}-${camarote.posicion}-${cama.posicion}-${i}`}
                               className={`flex items-center gap-2 ${getCamaColor(cama.estado)}`}
                             >
                               <span className="material-symbols-outlined bed-icon">bed</span>
                               <span className="text-xs font-medium">
-                                CAMAROTE {camarote.numeroCamarote}{" "}
-                                {cama.ubicación === "S" ? "SUPERIOR" : "INFERIOR"}
+                                CAMAROTE {camarote.posicion}{" "}
+                                {cama.posicion === 2 ? "SUPERIOR" : "INFERIOR"}
                               </span>
                             </div>
                           ))

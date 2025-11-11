@@ -45,7 +45,7 @@ const RoomDetails = () => {
 
     // 🛏️ Seleccionar/deseleccionar camas
     const toggleBed = (cama, camarote) => {
-        const key = `${camarote.numeroCamarote}-${cama.numeroCama}`;
+        const key = `${camarote.posicion}-${cama.posicion}`;
         setSelectedBeds((prev) =>
             prev.some((b) => b.key === key)
                 ? prev.filter((b) => b.key !== key)
@@ -54,8 +54,8 @@ const RoomDetails = () => {
     };
 
     // 🚀 Enviar datos al success
-    const navToSuccess = () => {
-        // Campos requeridos con etiquetas legibles
+    const navToSuccess = async () => {
+        // Campos requeridos
         const requiredFields = {
             name: "Nombre completo",
             email: "Correo electrónico",
@@ -67,28 +67,13 @@ const RoomDetails = () => {
             documentNumber: "Número de documento",
         };
 
-        // Detectar cuáles están vacíos
         const emptyFields = Object.entries(requiredFields)
-            .filter(([key]) => {
-                // Validación especial para el distrito “Otro”
-                if (key === "district") {
-                    const valor = formData[key]?.trim();
-                    return !valor; // si está vacío o no escribió nada
-                }
-                return !formData[key]?.trim();
-            })
+            .filter(([key]) => !formData[key]?.trim())
             .map(([, label]) => label);
 
-        // Validaciones adicionales
         const fechasIncompletas = !fechas?.desde || !fechas?.hasta;
         const sinCamasSeleccionadas = !selectedBeds || selectedBeds.length === 0;
 
-        // Verificar disponibilidad de camas
-        const hayCamasDisponibles = detalleHabitacion?.camarotes?.some((camarote) =>
-            camarote.camas?.some((cama) => cama.estado === "D")
-        );
-
-        // ⚠️ Mostrar advertencia si falta algo
         if (emptyFields.length > 0 || fechasIncompletas || sinCamasSeleccionadas) {
             let htmlMensaje = `<ul class="text-left mt-2">`;
 
@@ -100,9 +85,7 @@ const RoomDetails = () => {
                 htmlMensaje += `<li>• Selecciona el rango de fechas</li>`;
             }
 
-            if (!hayCamasDisponibles) {
-                htmlMensaje += `<li>• No hay camas disponibles en esta habitación</li>`;
-            } else if (sinCamasSeleccionadas) {
+            if (sinCamasSeleccionadas) {
                 htmlMensaje += `<li>• Selecciona al menos una cama disponible</li>`;
             }
 
@@ -122,20 +105,135 @@ const RoomDetails = () => {
                     : "#0F172A",
             });
 
-            return; // 🚫 Detener ejecución
+            return;
         }
 
-        // ✅ Si todo está completo, navegar al success
-        const state = {
-            reservationDetails: {
-                formData,
-                selectedBeds,
-                dates: { startDate: fechas.desde, endDate: fechas.hasta },
-                habitacion: detalleHabitacion,
-            },
+        // 🧩 Agrupar las camas seleccionadas por camarote
+        const camarotesMap = {};
+
+        selectedBeds.forEach(({ cama, camarote }) => {
+            const camaroteId = camarote.id;
+            if (!camarotesMap[camaroteId]) {
+                camarotesMap[camaroteId] = {
+                    id: camarote.id,
+                    habitacionId: camarote.habitacionId,
+                    posicion: camarote.posicion,
+                    camas: [],
+                };
+            }
+            camarotesMap[camaroteId].camas.push({
+                id: cama.id ?? null,
+                idCamarote: cama.idCamarote,
+                posicion: cama.posicion,
+                disponible: cama.disponible,
+            });
+        });
+
+        // 🧠 Convertir el objeto en array
+        const camarotesSeleccionados = Object.values(camarotesMap);
+
+        // 🏠 Crear la estructura de habitación
+        const habitacion = {
+            id: detalleHabitacion.id,
+            posicion: detalleHabitacion.posicion,
+            descripcion: detalleHabitacion.descripcion,
+            bloqueId: detalleHabitacion.bloqueId,
+            disponible:
+                detalleHabitacion.disponible !== undefined
+                    ? detalleHabitacion.disponible
+                    : true,
+            camarotes: camarotesSeleccionados,
         };
 
-        navigate("/success", { state });
+        // 🚀 Construir el payload final para backend
+        const payload = {
+            nombreCompleto: formData.name,
+            email: formData.email,
+            telefono: formData.phone,
+            distrito: formData.district,
+            genero: formData.gender,
+            edad: formData.age,
+            tipoDocumento: formData.documentType,
+            numeroDocumento: formData.documentNumber,
+            fechaInicio: fechas.desde,
+            fechaFin: fechas.hasta,
+            bloques: [
+                {
+                    id: detalleHabitacion.bloqueId,
+                    codigo: detalleHabitacion.codigo || "V",
+                    nombre: detalleHabitacion.nombreBloque || "Varones",
+                    habitaciones: [habitacion],
+                },
+            ],
+        };
+
+        console.log("📦 Payload final a enviar:", payload);
+
+        try {
+            // 🌀 Mostrar loader mientras se envía
+            Swal.fire({
+                title: "Creando tu reserva...",
+                text: "Por favor espera unos segundos",
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+                background: document.documentElement.classList.contains("dark")
+                    ? "#1E293B"
+                    : "#FFFFFF",
+                color: document.documentElement.classList.contains("dark")
+                    ? "#F1F5F9"
+                    : "#0F172A",
+            });
+
+            // 🌐 Enviar POST al backend
+            const response = await fetch("/api/reservas", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "No se pudo crear la reserva");
+            }
+
+            Swal.close(); // Cerrar loader
+
+            // ✅ Mostrar mensaje de éxito
+            await Swal.fire({
+                icon: "success",
+                title: "Reserva creada exitosamente 🎉",
+                text: "Tu reserva ha sido registrada correctamente.",
+                confirmButtonText: "Continuar",
+                confirmButtonColor: "#3B82F6",
+                background: document.documentElement.classList.contains("dark")
+                    ? "#1E293B"
+                    : "#FFFFFF",
+                color: document.documentElement.classList.contains("dark")
+                    ? "#F1F5F9"
+                    : "#0F172A",
+            });
+
+            // 🧭 Navegar al success con los detalles
+            navigate("/success", { state: { reservationDetails: data } });
+
+        } catch (error) {
+            console.error("❌ Error al crear reserva:", error);
+
+            Swal.fire({
+                icon: "error",
+                title: "Error al crear la reserva",
+                text: error.message || "Ocurrió un problema al enviar tu reserva.",
+                confirmButtonText: "Intentar nuevamente",
+                confirmButtonColor: "#EF4444",
+                background: document.documentElement.classList.contains("dark")
+                    ? "#1E293B"
+                    : "#FFFFFF",
+                color: document.documentElement.classList.contains("dark")
+                    ? "#F1F5F9"
+                    : "#0F172A",
+            });
+        }
     };
 
 
@@ -222,17 +320,17 @@ const RoomDetails = () => {
                                             className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex flex-col gap-4 bg-slate-50 dark:bg-slate-800/30"
                                         >
                                             <p className="font-semibold text-slate-800 dark:text-slate-200">
-                                                Camarote {camarote.numeroCamarote}
+                                                Camarote {camarote.posicion}
                                             </p>
 
                                             <div className="flex flex-col gap-2">
                                                 {camarote.camas.map((cama, iCama) => {
-                                                    const esDisponible = cama.estado === "D";
+                                                    const esDisponible = cama.disponible;
                                                     const ubicacion =
-                                                        cama.ubicación === "S"
+                                                        cama.posicion === 2
                                                             ? "SUPERIOR"
                                                             : "INFERIOR";
-                                                    const key = `${camarote.numeroCamarote}-${cama.numeroCama}`;
+                                                    const key = `${camarote.posicion}-${cama.posicion}`;
                                                     const checked = selectedBeds.some(
                                                         (b) => b.key === key
                                                     );
@@ -262,7 +360,7 @@ const RoomDetails = () => {
                                                                         : "text-slate-500 dark:text-slate-400"
                                                                         }`}
                                                                 >
-                                                                    Cama {cama.numeroCama} -{" "}
+                                                                    Cama {cama.posicion} -{" "}
                                                                     {ubicacion}
                                                                 </span>
                                                             </span>

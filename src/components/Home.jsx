@@ -21,60 +21,77 @@ const Home = () => {
     }));
   };
 
-  const navToDisponibility = async (hogar, habitaciones) => {
+  const navToDisponibility = async (hogar) => {
     try {
       const fechas = selectedDates[hogar] || {};
       const { desde, hasta } = fechas;
 
-      // Validar que las fechas estén seleccionadas
+      // ⚠️ Validar fechas seleccionadas
       if (!desde || !hasta) {
         Swal.fire({
           icon: "warning",
           title: "Fechas incompletas",
           text: "Por favor selecciona ambas fechas antes de continuar.",
-          confirmButtonColor: "#3B82F6", // azul tailwind
+          confirmButtonColor: "#3B82F6",
           confirmButtonText: "Entendido",
         });
         return;
       }
 
-      // Validar que la fecha desde no sea mayor a la fecha hasta
+      // ⚠️ Validar rango de fechas
       if (new Date(desde) > new Date(hasta)) {
         Swal.fire({
           icon: "error",
           title: "Rango de fechas inválido",
           text: "La fecha inicial no puede ser posterior a la fecha final.",
-          confirmButtonColor: "#EF4444", // rojo tailwind
+          confirmButtonColor: "#EF4444",
           confirmButtonText: "Corregir",
         });
         return;
       }
 
-      // Aquí puedes navegar o llamar a tu API
-      // navigate("/disponibility", {
-      //   state: { hogar, fechas },
-      // });
+      // 🌀 Mostrar pantalla de carga
+      Swal.fire({
+        title: "Consultando disponibilidad...",
+        html: "Por favor espera unos segundos.",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-      // 1️⃣ Llamar a la API
-      // const response = await fetch("https://www.shabbat-booking-api/get-rooms-detail", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ hogar }), // payload
-      // });
+      // 🌐 Llamar a la API
+      const response = await fetch(`/api/bloques/${hogar === "V" ? 1 : 2}`);
 
-      // 2️⃣ Validar respuesta
-      // if (!response.ok) {
-      //   throw new Error("Error al obtener habitaciones");
-      // }
+      // ❌ Validar respuesta
+      if (!response.ok) {
+        throw new Error("Error al obtener habitaciones");
+      }
 
-      // 3️⃣ Obtener datos
-      // const data = await response.json();
+      const { codigo, habitaciones } = await response.json();
 
-      navigate("/disponibility", { state: { habitacionesHogar: habitaciones, hogar, fechas } });
+      // ✅ Cerrar el loader
+      Swal.close();
+
+      // ✅ Navegar a disponibilidad
+      navigate("/disponibility", {
+        state: {
+          habitacionesHogar: habitaciones,
+          hogar: codigo,
+          fechas,
+        },
+      });
     } catch (error) {
-      console.log(error)
+      console.error(error);
+
+      // ❌ Mostrar error y cerrar loader
+      Swal.fire({
+        icon: "error",
+        title: "Error al cargar disponibilidad",
+        text: "Ocurrió un problema al conectar con el servidor. Intenta nuevamente.",
+        confirmButtonColor: "#EF4444",
+      });
     }
   };
 
@@ -239,7 +256,7 @@ const Home = () => {
 
             {/* Tarjetas */}
             <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
-              {hogares.map(({ title, desc, img, hogar, habitaciones }) => (
+              {hogares.map(({ title, desc, img, hogar }) => (
                 <div
                   key={title}
                   className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 hover:shadow-lg dark:hover:shadow-primary/10 transition-all"
@@ -281,7 +298,7 @@ const Home = () => {
 
                     {/* Botón de acción */}
                     <button
-                      onClick={() => navToDisponibility(hogar, habitaciones)}
+                      onClick={() => navToDisponibility(hogar)}
                       className="flex mt-auto w-full h-12 px-5 items-center justify-center rounded-lg bg-primary text-slate-50 text-base font-bold hover:bg-primary/90 transition-colors"
                     >
                       Ver Disponibilidad

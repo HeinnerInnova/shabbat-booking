@@ -8,7 +8,8 @@ const Success = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { reservationDetails } = location.state || {};
-    // 🧭 Redirigir si no hay datos de habitación
+
+    // 🧭 Redirigir si no hay datos
     useEffect(() => {
         if (!reservationDetails) {
             navigate("/room-details", { replace: true });
@@ -16,38 +17,45 @@ const Success = () => {
     }, [reservationDetails, navigate]);
 
     if (!reservationDetails) return null;
-    const generarDescripcionCamas = (selectedBeds) => {
-        if (!selectedBeds || selectedBeds.length === 0) {
-            return "No hay camas seleccionadas.";
-        }
 
-        // Agrupar por número de camarote
-        const agrupado = selectedBeds.reduce((acc, item) => {
-            const numCamarote = item.camarote.numeroCamarote;
-            if (!acc[numCamarote]) acc[numCamarote] = [];
-            acc[numCamarote].push(item.cama);
-            return acc;
-        }, {});
+    // 🧩 Extraer información principal
+    const {
+        nombreCompleto,
+        email,
+        telefono,
+        distrito,
+        genero,
+        edad,
+        tipoDocumento,
+        numeroDocumento,
+        fechaInicio,
+        fechaFin,
+        bloques = [],
+    } = reservationDetails;
 
-        // Construir el texto final
-        const descripcion = Object.entries(agrupado)
-            .map(([numCamarote, camas]) => {
-                const camasTexto = camas
+    const bloque = bloques[0];
+    const habitacion = bloque?.habitaciones?.[0];
+    const camarotes = habitacion?.camarotes || [];
+
+    // 🛏️ Generar descripción de camas
+    const generarDescripcionCamas = () => {
+        if (!camarotes.length) return "No hay camas seleccionadas.";
+
+        return camarotes
+            .map((camarote) => {
+                const camasTexto = camarote.camas
                     .map(
                         (c) =>
-                            `Cama ${c.numeroCama} (${c.ubicación === "S" ? "Superior" : "Inferior"})`
+                            `Cama ${c.posicion} (${c.posicion === 2 ? "Superior" : "Inferior"})`
                     )
                     .join(", ");
-                return `Camarote ${numCamarote} — ${camasTexto}`;
+                return `Camarote ${camarote.posicion} — ${camasTexto}`;
             })
             .join(" / ");
-
-        return `${descripcion}`;
     };
 
-    const navToHome = () => {
-        navigate("/");
-    };
+    const navToHome = () => navigate("/");
+
     return (
         <>
             <HeadConfig />
@@ -67,100 +75,90 @@ const Success = () => {
                                         ¡Solicitud Recibida!
                                     </h1>
                                     <p className="text-sm sm:text-base font-normal leading-normal text-slate-600 dark:text-slate-400">
-                                        Tu solicitud ha sido procesada con éxito. Revisa los detalles a
-                                        continuación y completa el pago para asegurar tu plaza.
+                                        Tu solicitud ha sido procesada con éxito. Revisa los detalles a continuación y completa el pago para asegurar tu plaza.
                                     </p>
                                 </div>
                                 <div className="rounded-lg bg-amber-100 dark:bg-amber-500/10 p-4">
                                     <div className="flex items-start gap-3">
-
                                         <div className="flex-1">
                                             <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
                                                 Aviso Importante
                                             </h4>
                                             <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
-                                                El pago debe realizarse en las próximas 48 horas. De lo
-                                                contrario, la reserva será cancelada automáticamente.
+                                                El pago debe realizarse en las próximas 48 horas. De lo contrario, la reserva será cancelada automáticamente.
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            {/* 🧾 RESUMEN DE LA RESERVA */}
                             <div className="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-6 sm:p-8">
                                 <div className="flex flex-col gap-4">
                                     <h3 className="text-lg font-bold leading-tight text-slate-900 dark:text-white">
                                         Resumen de la Reserva
                                     </h3>
                                     <div className="flex flex-col divide-y divide-slate-200 dark:divide-slate-800 border-y border-slate-200 dark:border-slate-800">
+
                                         <div className="flex justify-between items-center gap-x-4 py-3">
-                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                ID de Reserva
-                                            </p>
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Nombre del solicitante</p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">{nombreCompleto}</p>
+                                        </div>
+
+                                        <div className="flex justify-between items-center gap-x-4 py-3">
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{tipoDocumento}</p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">{numeroDocumento}</p>
+                                        </div>
+
+                                        <div className="flex justify-between items-center gap-x-4 py-3">
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Teléfono</p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">{telefono}</p>
+                                        </div>
+
+                                        <div className="flex justify-between items-center gap-x-4 py-3">
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Correo electrónico</p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">{email}</p>
+                                        </div>
+
+                                        <div className="flex justify-between items-center gap-x-4 py-3">
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Distrito</p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">{distrito}</p>
+                                        </div>
+
+                                        <div className="flex justify-between items-center gap-x-4 py-3">
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Fechas</p>
                                             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                #R8B-34X-9Y2
+                                                Del {new Date(`${fechaInicio}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
+                                                {" "}al{" "}
+                                                {new Date(`${fechaFin}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
                                             </p>
                                         </div>
+
                                         <div className="flex justify-between items-center gap-x-4 py-3">
-                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                Nombre del solicitante
-                                            </p>
-                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                {reservationDetails.formData.name}
-                                            </p>
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Hogar</p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">{bloque?.nombre}</p>
                                         </div>
+
                                         <div className="flex justify-between items-center gap-x-4 py-3">
-                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                {reservationDetails.formData.documentType}
-                                            </p>
-                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                {reservationDetails.formData.documentNumber}
-                                            </p>
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Numero de Habitación</p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">{habitacion?.posicion}</p>
                                         </div>
+
                                         <div className="flex justify-between items-center gap-x-4 py-3">
-                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                Fechas
-                                            </p>
+                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Camas seleccionadas</p>
                                             <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                Del {new Date(`${reservationDetails.dates.startDate}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })} al {new Date(`${reservationDetails.dates.endDate}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
-                                            </p>
-                                        </div>
-                                        <div className="flex justify-between items-center gap-x-4 py-3">
-                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                Distrito al que pertenece
-                                            </p>
-                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                {reservationDetails.formData.district}
-                                            </p>
-                                        </div>
-                                        <div className="flex justify-between items-center gap-x-4 py-3">
-                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                Hogar Seleccionado
-                                            </p>
-                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                {reservationDetails.habitacion.hogar === 'S' ? 'Hogar de Señoritas' : 'Hogar de Varones'}
-                                            </p>
-                                        </div>
-                                        <div className="flex justify-between items-center gap-x-4 py-3">
-                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                Habitación Seleccionada
-                                            </p>
-                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                {reservationDetails.habitacion.numeroHabitación}
-                                            </p>
-                                        </div>
-                                        <div className="flex justify-between items-center gap-x-4 py-3">
-                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                                                Camas
-                                            </p>
-                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">
-                                                {generarDescripcionCamas(reservationDetails.selectedBeds)}
+                                                {generarDescripcionCamas()}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                             <div className="flex w-full flex-col gap-4 p-6 sm:p-8 pt-4 sm:pt-6">
-                                <button onClick={navToHome} className="flex w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-wide hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark transition-colors">
+                                <button
+                                    onClick={navToHome}
+                                    className="flex w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-wide hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 transition-colors"
+                                >
                                     <span>Volver al Inicio</span>
                                 </button>
                             </div>
@@ -170,7 +168,7 @@ const Success = () => {
                 <Footer />
             </div>
         </>
-
     );
-}
+};
+
 export default Success;
