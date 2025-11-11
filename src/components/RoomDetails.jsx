@@ -184,8 +184,12 @@ const RoomDetails = () => {
                     : "#0F172A",
             });
 
+            const API_BASE = import.meta.env.DEV
+                ? "/api"
+                : "https://shabbat-booking.onrender.com/shabbat-booking/api";
+
             // 🌐 Enviar POST al backend
-            const response = await fetch("/api/reservas", {
+            const response = await fetch(`${API_BASE}/reservas`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),

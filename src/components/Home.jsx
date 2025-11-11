@@ -61,8 +61,14 @@ const Home = () => {
         },
       });
 
+      // Detecta si estás en entorno local o producción
+      const API_BASE = import.meta.env.DEV
+        ? "/api"
+        : "https://shabbat-booking.onrender.com/shabbat-booking/api";
+
+
       // 🌐 Llamar a la API
-      const response = await fetch(`/api/bloques/${hogar === "V" ? 1 : 2}`);
+      const response = await fetch(`${API_BASE}/bloques/${hogar === "V" ? 1 : 2}`);
 
       // ❌ Validar respuesta
       if (!response.ok) {
