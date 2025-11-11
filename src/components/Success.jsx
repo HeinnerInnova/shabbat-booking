@@ -24,15 +24,12 @@ const Success = () => {
         email,
         telefono,
         distrito,
-        genero,
-        edad,
         tipoDocumento,
-        numeroDocumento,
+        documento,
         fechaInicio,
         fechaFin,
         bloques = [],
     } = reservationDetails;
-
     const bloque = bloques[0];
     const habitacion = bloque?.habitaciones?.[0];
     const camarotes = habitacion?.camarotes || [];
@@ -107,7 +104,7 @@ const Success = () => {
 
                                         <div className="flex justify-between items-center gap-x-4 py-3">
                                             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{tipoDocumento}</p>
-                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">{numeroDocumento}</p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 text-right">{documento}</p>
                                         </div>
 
                                         <div className="flex justify-between items-center gap-x-4 py-3">

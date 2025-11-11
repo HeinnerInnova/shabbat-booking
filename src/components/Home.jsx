@@ -68,7 +68,7 @@ const Home = () => {
 
 
       // 🌐 Llamar a la API
-      const response = await fetch(`${API_BASE}/bloques/${hogar === "V" ? 1 : 2}`);
+      const response = await fetch(`${API_BASE}/bloques/${hogar === "V" ? 1 : 2}?fechaInicio=${desde}&fechaFin=${hasta}`);
 
       // ❌ Validar respuesta
       if (!response.ok) {

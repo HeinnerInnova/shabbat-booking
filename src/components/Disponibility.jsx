@@ -46,8 +46,7 @@ export default function Disponibility() {
    * Determina la clase de color para una cama según su estado.
    */
   const getCamaColor = (estado) => {
-    if (estado === "D") return "text-green-status";
-    return "text-gray-400 dark:text-gray-600";
+    return estado ? "text-green-status" : "text-gray-400 dark:text-gray-600";
   };
 
   /**
@@ -176,7 +175,7 @@ export default function Disponibility() {
                           camarote.camas.map((cama, i) => (
                             <div
                               key={`${habitacion.posicion}-${camarote.posicion}-${cama.posicion}-${i}`}
-                              className={`flex items-center gap-2 ${getCamaColor(cama.estado)}`}
+                              className={`flex items-center gap-2 ${getCamaColor(cama.disponible)}`}
                             >
                               <span className="material-symbols-outlined bed-icon">bed</span>
                               <span className="text-xs font-medium">
