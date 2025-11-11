@@ -186,7 +186,7 @@ const RoomDetails = () => {
 
             const API_BASE = import.meta.env.DEV
                 ? "/api"
-                : "https://shabbat-booking.onrender.com/shabbat-booking/api";
+                : "https://corsproxy.io/?" + encodeURIComponent("https://shabbat-booking.onrender.com/shabbat-booking/api");
 
             // 🌐 Enviar POST al backend
             const response = await fetch(`${API_BASE}/reservas`, {

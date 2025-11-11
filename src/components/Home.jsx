@@ -64,7 +64,7 @@ const Home = () => {
       // Detecta si estás en entorno local o producción
       const API_BASE = import.meta.env.DEV
         ? "/api"
-        : "https://shabbat-booking.onrender.com/shabbat-booking/api";
+        : "https://corsproxy.io/?" + encodeURIComponent("https://shabbat-booking.onrender.com/shabbat-booking/api");
 
 
       // 🌐 Llamar a la API
