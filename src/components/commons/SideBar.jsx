@@ -69,11 +69,11 @@ const SideBar = ({ isOpen, setIsOpen }) => {
                                 >
                                     bed
                                 </span>
-                                <p className="text-sm font-medium">Reservas Pendientes</p>
+                                <p className="text-sm font-medium">Lista de reservas</p>
                             </a>
 
                             {/* Reservas Activas */}
-                            <a
+                            {/* <a
                                 className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer
                   ${isActive("/view-requests")
                                         ? "bg-primary text-white"
@@ -86,7 +86,7 @@ const SideBar = ({ isOpen, setIsOpen }) => {
                             >
                                 <span className="material-symbols-outlined">home</span>
                                 <p className="text-sm font-medium">Reservas Activas</p>
-                            </a>
+                            </a> */}
                         </div>
                     </div>
 

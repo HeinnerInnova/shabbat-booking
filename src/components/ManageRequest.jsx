@@ -118,18 +118,29 @@ const ManageRequest = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedHome, setSelectedHome] = useState(""); // "V" o "S"
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  // Nuevo estado
+  const [selectedEstado, setSelectedEstado] = useState("");
+
+  // Función manejadora
+  const handleEstadoChange = (estado) => {
+    setSelectedEstado(estado);
+  };
+
 
   // 🧩 Aplicar filtros sobre el array original
   const filteredReservations = reservations.filter((reserva) => {
     const nombre = reserva.nombreCompleto?.toLowerCase() || "";
-    const tipoHogar = reserva.tipoHogar?.toUpperCase() || "";
+    const tipoHogar = reserva.bloques?.[0]?.codigo?.toUpperCase() || "";
     const search = searchTerm.toLowerCase();
 
     // Coincidencia por nombre o tipo de hogar
     const matchesNameOrHome =
       nombre.includes(search) ||
       (tipoHogar === "V" && "varones".includes(search)) ||
-      (tipoHogar === "S" && "señoritas".includes(search));
+      (tipoHogar === "M" && "mujeres".includes(search));
+
+    const matchesEstado =
+      !selectedEstado || reserva.estado === selectedEstado;
 
     // Filtro por hogar
     const matchesHome = !selectedHome || tipoHogar === selectedHome;
@@ -142,7 +153,7 @@ const ManageRequest = () => {
       (!dateRange.start || fechaInicio >= new Date(dateRange.start)) &&
       (!dateRange.end || fechaFin <= new Date(dateRange.end));
 
-    return matchesNameOrHome && matchesHome && matchesDate;
+    return matchesNameOrHome && matchesHome && matchesDate && matchesEstado;
   });
 
   // ✅ Función para aprobar una reserva
@@ -162,21 +173,71 @@ const ManageRequest = () => {
       color: document.documentElement.classList.contains("dark")
         ? "#F1F5F9"
         : "#0F172A",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        // 👉 Aquí puedes agregar la lógica real de aprobación (API o cambio de estado)
-        Swal.fire({
-          icon: "success",
-          title: "Reserva aprobada",
-          text: "La reserva fue aprobada exitosamente.",
-          confirmButtonColor: "#22C55E",
-          background: document.documentElement.classList.contains("dark")
-            ? "#1E293B"
-            : "#FFFFFF",
-          color: document.documentElement.classList.contains("dark")
-            ? "#F1F5F9"
-            : "#0F172A",
-        });
+        try {
+          // 🌀 Mostrar loader mientras se envía
+          Swal.fire({
+            title: "Actualizando reserva...",
+            text: "Por favor espera unos segundos",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+            background: document.documentElement.classList.contains("dark")
+              ? "#1E293B"
+              : "#FFFFFF",
+            color: document.documentElement.classList.contains("dark")
+              ? "#F1F5F9"
+              : "#0F172A",
+          });
+
+          const API_BASE = import.meta.env.DEV
+            ? "/api"
+            : "https://corsproxy.io/?" + encodeURIComponent("https://shabbat-booking.onrender.com/shabbat-booking/api");
+
+          // 🌐 Enviar PATCH al backend
+          const response = await fetch(`${API_BASE}/reservas/${reserva.id}/estado`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ estado: "Activa" }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "No se pudo crear la reserva");
+          }
+
+          Swal.close(); // Cerrar loader
+
+          // ✅ Mostrar mensaje de éxito
+          await Swal.fire({
+            icon: "success",
+            title: "Reserva aprobada",
+            text: "La reserva fue aprobada exitosamente.",
+            confirmButtonColor: "#22C55E",
+            background: document.documentElement.classList.contains("dark")
+              ? "#1E293B"
+              : "#FFFFFF",
+            color: document.documentElement.classList.contains("dark")
+              ? "#F1F5F9"
+              : "#0F172A",
+          });
+
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "Error al crear la reserva",
+            text: error.message || "Ocurrió un problema al enviar tu reserva.",
+            confirmButtonText: "Intentar nuevamente",
+            confirmButtonColor: "#EF4444",
+            background: document.documentElement.classList.contains("dark")
+              ? "#1E293B"
+              : "#FFFFFF",
+            color: document.documentElement.classList.contains("dark")
+              ? "#F1F5F9"
+              : "#0F172A",
+          });
+        }
       }
     });
   };
@@ -259,14 +320,35 @@ const ManageRequest = () => {
               </div>
 
               <select
-                className="h-12 rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700 px-4 text-sm text-gray-900 dark:text-white"
+                className="h-12 min-w-[190px] rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700 px-4 pr-10 text-sm text-gray-900 dark:text-white appearance-none bg-no-repeat bg-[right_0.75rem_center] bg-[length:1rem_auto]"
                 value={selectedHome}
                 onChange={(e) => setSelectedHome(e.target.value)}
+                style={{
+                  backgroundImage:
+                    "url(\"data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\")",
+                }}
               >
                 <option value="">Todos los hogares</option>
                 <option value="V">Hogar de Varones</option>
-                <option value="S">Hogar de Señoritas</option>
+                <option value="M">Hogar de Mujeres</option>
               </select>
+
+
+              <select
+                className="h-12 min-w-[190px] rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700 px-4 pr-10 text-sm text-gray-900 dark:text-white appearance-none bg-no-repeat bg-[right_0.75rem_center] bg-[length:1rem_auto]"
+                value={selectedEstado}
+                onChange={(e) => handleEstadoChange(e.target.value)}
+                style={{
+                  backgroundImage:
+                    "url(\"data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\")",
+                }}
+              >
+                <option value="">Todos los estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Activa">Activa</option>
+                <option value="Cerrada">Cerrada</option>
+              </select>
+
 
               <input
                 type="date"
