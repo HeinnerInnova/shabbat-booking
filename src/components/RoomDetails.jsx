@@ -536,11 +536,19 @@ const RoomDetails = () => {
                                             <p className="mt-1 text-base font-semibold text-slate-900 dark:text-slate-100">
                                                 Del{" "}
                                                 <span className="text-primary">
-                                                    {new Date(`${fechas.desde}T00:00:00Z`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
+                                                    {new Date(`${fechas.desde}T00:00:00`).toLocaleDateString("es-CO", {
+                                                        day: "numeric",
+                                                        month: "long",
+                                                        year: "numeric",
+                                                    })}
                                                 </span>{" "}
                                                 al{" "}
                                                 <span className="text-primary">
-                                                    {new Date(`${fechas.hasta}T00:00:00Z`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
+                                                    {new Date(`${fechas.hasta}T00:00:00`).toLocaleDateString("es-CO", {
+                                                        day: "numeric",
+                                                        month: "long",
+                                                        year: "numeric",
+                                                    })}
                                                 </span>
                                             </p>
                                         ) : (
