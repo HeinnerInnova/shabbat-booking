@@ -85,7 +85,8 @@ const ManageRequest = () => {
     // Creamos el objeto que se enviará al modal
     const formattedReservation = {
       nombreCompleto: reserva.nombreCompleto,
-      documentNumber: reserva.documentNumber || "No registrado",
+      tipoDocumento: reserva.tipoDocumento || "No registrado",
+      documentNumber: reserva.documento || "No registrado",
       correo: reserva.correo || "No registrado",
       telefono: reserva.telefono || "No registrado",
       genero: reserva.genero || "No especificado",
@@ -367,35 +368,80 @@ const ManageRequest = () => {
                         </td>
 
                         {/* Estado */}
+                        {/* Estado */}
                         <td className="p-4 text-center">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                            Pendiente
-                          </span>
+                          {(() => {
+                            const estado = reserva.estado || "Pendiente";
+
+                            // Definimos los estilos según el estado
+                            const estadoClasses = {
+                              Pendiente:
+                                "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300",
+                              Activa:
+                                "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300",
+                              Cerrada:
+                                "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+                            };
+
+                            const clase = estadoClasses[estado] || estadoClasses["Pendiente"];
+
+                            return (
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${clase}`}
+                              >
+                                {estado}
+                              </span>
+                            );
+                          })()}
                         </td>
 
+
+                        {/* Acciones */}
                         {/* Acciones */}
                         <td className="p-4 text-right">
                           <div className="flex justify-end items-center gap-2">
-                            <button
-                              onClick={() => handleApprove(reserva)}
-                              title="Aprobar"
-                              className="size-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors flex items-center justify-center"
-                            >
-                              <span className="material-symbols-outlined text-[18px]">
-                                check
-                              </span>
-                            </button>
+                            {/* Estado: Pendiente → mostrar Aprobar, Rechazar y Ver detalle */}
+                            {reserva.estado === "Pendiente" && (
+                              <>
+                                <button
+                                  onClick={() => handleApprove(reserva)}
+                                  title="Aprobar"
+                                  className="size-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors flex items-center justify-center"
+                                >
+                                  <span className="material-symbols-outlined text-[18px]">
+                                    check
+                                  </span>
+                                </button>
 
-                            <button
-                              onClick={() => handleReject(reserva)}
-                              title="Rechazar"
-                              className="size-8 rounded-lg bg-danger/10 text-danger hover:bg-danger/20 transition-colors flex items-center justify-center"
-                            >
-                              <span className="material-symbols-outlined text-[18px]">
-                                close
-                              </span>
-                            </button>
+                                <button
+                                  onClick={() => handleReject(reserva)}
+                                  title="Rechazar"
+                                  className="size-8 rounded-lg bg-danger/10 text-danger hover:bg-danger/20 transition-colors flex items-center justify-center"
+                                >
+                                  <span className="material-symbols-outlined text-[18px]">
+                                    close
+                                  </span>
+                                </button>
+                              </>
+                            )}
 
+                            {/* Estado: Activa → mostrar Cerrar y Ver detalle */}
+                            {reserva.estado === "Activa" && (
+                              <>
+                                <button
+                                  onClick={() => handleReject(reserva)} // mejor nombrar así el handler
+                                  title="Cerrar reserva"
+                                  className="size-8 rounded-lg bg-danger/10 text-danger hover:bg-danger/20 transition-colors flex items-center justify-center"
+                                >
+                                  <span className="material-symbols-outlined text-[18px]">
+                                    done_all
+                                  </span>
+                                </button>
+                              </>
+                            )}
+
+                            {/* Estado: Cerrada → solo Ver detalle */}
+                            {/* El botón de ver detalle se muestra siempre */}
                             <button
                               onClick={() => handleViewDetails(reserva)}
                               title="Ver detalles"
