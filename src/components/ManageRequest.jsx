@@ -81,13 +81,12 @@ const ManageRequest = () => {
     // Formateamos las fechas
     const fechaIngreso = new Date(`${reserva.fechaInicio}T00:00:00`).toLocaleDateString();
     const fechaSalida = new Date(`${reserva.fechaFin}T00:00:00`).toLocaleDateString();
-
     // Creamos el objeto que se enviará al modal
     const formattedReservation = {
       nombreCompleto: reserva.nombreCompleto,
       tipoDocumento: reserva.tipoDocumento || "No registrado",
       documentNumber: reserva.documento || "No registrado",
-      correo: reserva.correo || "No registrado",
+      correo: reserva.email || "No registrado",
       telefono: reserva.telefono || "No registrado",
       genero: reserva.genero || "No especificado",
       distrito: reserva.distrito || "No registrado",
