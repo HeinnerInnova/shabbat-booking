@@ -209,6 +209,11 @@ const ManageRequest = () => {
 
           Swal.close(); // Cerrar loader
 
+          // ✅ Actualizar la reserva en el estado
+          setReservations((prevReservations) =>
+            prevReservations.map((r) => (r.id === data.id ? data : r))
+          );
+
           // ✅ Mostrar mensaje de éxito
           await Swal.fire({
             icon: "success",
@@ -226,8 +231,8 @@ const ManageRequest = () => {
         } catch (error) {
           Swal.fire({
             icon: "error",
-            title: "Error al crear la reserva",
-            text: error.message || "Ocurrió un problema al enviar tu reserva.",
+            title: "Error al actualizar la reserva",
+            text: error.message || "Ocurrió un problema al procesar tu reserva.",
             confirmButtonText: "Intentar nuevamente",
             confirmButtonColor: "#EF4444",
             background: document.documentElement.classList.contains("dark")
@@ -259,21 +264,80 @@ const ManageRequest = () => {
       color: document.documentElement.classList.contains("dark")
         ? "#F1F5F9"
         : "#0F172A",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
+
+        try {
+          // 🌀 Mostrar loader mientras se envía
+          Swal.fire({
+            title: "Actualizando reserva...",
+            text: "Por favor espera unos segundos",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+            background: document.documentElement.classList.contains("dark")
+              ? "#1E293B"
+              : "#FFFFFF",
+            color: document.documentElement.classList.contains("dark")
+              ? "#F1F5F9"
+              : "#0F172A",
+          });
+
+          const API_BASE = import.meta.env.DEV
+            ? "/api"
+            : "https://corsproxy.io/?" + encodeURIComponent("https://shabbat-booking.onrender.com/shabbat-booking/api");
+
+          // 🌐 Enviar PATCH al backend
+          const response = await fetch(`${API_BASE}/reservas/${reserva.id}/estado`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ estado: "Cerrada" }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "No se pudo crear la reserva");
+          }
+
+          Swal.close(); // Cerrar loader
+
+          // ✅ Actualizar la reserva en el estado
+          setReservations((prevReservations) =>
+            prevReservations.map((r) => (r.id === data.id ? data : r))
+          );
+
+          // ✅ Mostrar mensaje de éxito
+          await Swal.fire({
+            icon: "success",
+            title: "Reserva rechazada",
+            text: "La reserva fue rechazada correctamente.",
+            confirmButtonColor: "#EF4444",
+            background: document.documentElement.classList.contains("dark")
+              ? "#1E293B"
+              : "#FFFFFF",
+            color: document.documentElement.classList.contains("dark")
+              ? "#F1F5F9"
+              : "#0F172A",
+          });
+
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "Error al actualizar la reserva",
+            text: error.message || "Ocurrió un problema al procesar tu reserva.",
+            confirmButtonText: "Intentar nuevamente",
+            confirmButtonColor: "#EF4444",
+            background: document.documentElement.classList.contains("dark")
+              ? "#1E293B"
+              : "#FFFFFF",
+            color: document.documentElement.classList.contains("dark")
+              ? "#F1F5F9"
+              : "#0F172A",
+          });
+        }
+
         // 👉 Aquí puedes agregar la lógica real de rechazo (API o cambio de estado)
-        Swal.fire({
-          icon: "success",
-          title: "Reserva rechazada",
-          text: "La reserva fue rechazada correctamente.",
-          confirmButtonColor: "#EF4444",
-          background: document.documentElement.classList.contains("dark")
-            ? "#1E293B"
-            : "#FFFFFF",
-          color: document.documentElement.classList.contains("dark")
-            ? "#F1F5F9"
-            : "#0F172A",
-        });
+
       }
     });
   };
