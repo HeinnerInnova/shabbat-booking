@@ -364,10 +364,10 @@ const ManageRequest = () => {
             <div className="flex flex-wrap justify-between items-center gap-4">
               <div>
                 <p className="text-gray-900 dark:text-white text-3xl font-bold">
-                  Reservas Pendientes
+                  Reservas
                 </p>
                 <p className="text-gray-500 dark:text-gray-400 text-base">
-                  {filteredReservations.length} reservas pendientes
+                  {filteredReservations.length} reservas encontradas
                 </p>
               </div>
             </div>
